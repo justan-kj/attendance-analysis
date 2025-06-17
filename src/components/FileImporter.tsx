@@ -1,49 +1,59 @@
 import React, { useState } from 'react'
 import type { ChangeEvent } from 'react'
-import { read, utils } from 'xlsx'
+import { read } from 'xlsx'
 import type { WorkBook, WorkSheet } from 'xlsx'
+import {
+    Button,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Paper,
+    Select,
+    Typography,
+    Alert,
+    Stack,
+} from '@mui/material'
+import UploadFileIcon from '@mui/icons-material/UploadFile'
 
-const FileImporter: React.FC = () => {
+interface FileImporterProps {
+    onSubmit?: (data: WorkSheet) => void
+}
+
+const FileImporter: React.FC<FileImporterProps> = ({ onSubmit }) => {
     const [error, setError] = useState<string | null>(null)
+    const [file, setFile] = useState<File | null>(null)
     const [workbook, setWorkbook] = useState<WorkBook | null>(null)
-    const [selectedSheet, setSelectedSheet] = useState<WorkSheet | null>(null)
-    const [__html, setHTML] = React.useState('')
+    const [selectedSheetname, setSelectedSheetname] = useState<string | null>(
+        null
+    )
 
     const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
         if (!file) {
             return
         }
+        setFile(file)
         try {
             setError(null)
             const data = await file.arrayBuffer()
             const loadedWorkbook = read(data)
             setWorkbook(loadedWorkbook)
-            setSelectedSheet(
-                loadedWorkbook.Sheets[loadedWorkbook.SheetNames[0]]
-            )
+            setSelectedSheetname(loadedWorkbook.SheetNames[0])
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to load file')
             console.error('Error importing file:', err)
         }
     }
 
-    const handleSheetChange = async (event: ChangeEvent<HTMLSelectElement>) => {
-        const sheetName = event.target.value
-        if (workbook && sheetName) {
-            const sheet = workbook.Sheets[sheetName]
-            setSelectedSheet(sheet)
-        }
-    }
-
     const handleSubmit = async () => {
-        if (!workbook || !selectedSheet) {
+        if (!workbook || !selectedSheetname) {
             setError('Please select a file and a sheet first.')
             return
         }
         try {
-            const sheetData = utils.sheet_to_html(selectedSheet)
-            setHTML(sheetData)
+            if (onSubmit) {
+                onSubmit(workbook.Sheets[selectedSheetname])
+            }
         } catch (err) {
             setError(
                 err instanceof Error ? err.message : 'Failed to process sheet'
@@ -53,50 +63,69 @@ const FileImporter: React.FC = () => {
     }
 
     return (
-        <div className="file-importer">
-            <div className="file-input-container">
-                <label htmlFor="file-upload" className="file-label">
-                    Select a file
-                </label>
-                <input
-                    id="file-upload"
-                    type="file"
-                    accept={'.xlsx'}
-                    onChange={handleFileChange}
-                    className="file-input"
-                />
-            </div>
-            {workbook && (
-                <div className="sheet-selector">
-                    <label htmlFor="sheet-select" className="file-label">
-                        Select a sheet
-                    </label>
-                    <select
-                        id="sheet-select"
-                        value={selectedSheet ? selectedSheet.name : ''}
-                        onChange={handleSheetChange}
+        <Paper
+            className="max-w-md"
+            elevation={3}
+            sx={{
+                p: 3,
+                mx: 'auto',
+                mt: 3,
+            }}
+        >
+            <Stack spacing={3} sx={{ mt: 3 }}>
+                <Stack direction="row" spacing={1} alignItems="center">
+                    <Button
+                        variant="contained"
+                        component="label"
+                        startIcon={<UploadFileIcon />}
+                        sx={{
+                            minWidth: 'fit-content',
+                        }}
                     >
-                        {workbook.SheetNames.map((name) => (
-                            <option key={name} value={name}>
-                                {name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-            )}
+                        Choose File
+                        <input
+                            type="file"
+                            accept={'.xlsx'}
+                            onChange={handleFileChange}
+                            hidden
+                        />
+                    </Button>
+                    <Typography variant="body1" noWrap={true}>
+                        {file ? file.name : 'No file selected'}
+                    </Typography>
+                </Stack>
 
-            {error && <div className="error-message">{error}</div>}
+                {workbook && (
+                    <FormControl fullWidth variant="outlined">
+                        <InputLabel id="sheet-select-label">Sheet</InputLabel>
+                        <Select
+                            label="Sheet"
+                            value={selectedSheetname ? selectedSheetname : ''}
+                            onChange={(e) =>
+                                setSelectedSheetname(e.target.value)
+                            }
+                        >
+                            {workbook.SheetNames.map((sheetName) => (
+                                <MenuItem value={sheetName}>
+                                    {sheetName}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                )}
 
-            <button
-                className="submit-button"
-                onClick={handleSubmit}
-                disabled={!workbook || !selectedSheet}
-            >
-                Submit
-            </button>
+                {error && <Alert severity="error">{error}</Alert>}
 
-            <div dangerouslySetInnerHTML={{ __html }} />
-        </div>
+                <Button
+                    className="submit-button"
+                    variant="contained"
+                    onClick={handleSubmit}
+                    disabled={!workbook || !selectedSheetname}
+                >
+                    Upload
+                </Button>
+            </Stack>
+        </Paper>
     )
 }
 
