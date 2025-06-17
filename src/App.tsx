@@ -1,4 +1,4 @@
-import FileImporter from './components/FileImporter'
+import DataTable from './pages/DataTable'
 import { Container, CssBaseline } from '@mui/material'
 
 function App() {
@@ -6,7 +6,7 @@ function App() {
         <>
             <CssBaseline />
             <Container>
-                <FileImporter />
+                <DataTable />
             </Container>
         </>
     )

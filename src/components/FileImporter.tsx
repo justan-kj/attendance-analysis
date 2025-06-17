@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import type { ChangeEvent } from 'react'
-import { read, utils } from 'xlsx'
-import type { WorkBook } from 'xlsx'
+import { read } from 'xlsx'
+import type { WorkBook, WorkSheet } from 'xlsx'
 import {
     Button,
     FormControl,
@@ -15,14 +15,17 @@ import {
 } from '@mui/material'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
 
-const FileImporter: React.FC = () => {
+interface FileImporterProps {
+    onSubmit?: (data: WorkSheet) => void
+}
+
+const FileImporter: React.FC<FileImporterProps> = ({ onSubmit }) => {
     const [error, setError] = useState<string | null>(null)
     const [file, setFile] = useState<File | null>(null)
     const [workbook, setWorkbook] = useState<WorkBook | null>(null)
     const [selectedSheetname, setSelectedSheetname] = useState<string | null>(
         null
     )
-    const [__html, setHTML] = React.useState('')
 
     const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
@@ -48,10 +51,9 @@ const FileImporter: React.FC = () => {
             return
         }
         try {
-            const sheetData = utils.sheet_to_html(
-                workbook.Sheets[selectedSheetname]
-            )
-            setHTML(sheetData)
+            if (onSubmit) {
+                onSubmit(workbook.Sheets[selectedSheetname])
+            }
         } catch (err) {
             setError(
                 err instanceof Error ? err.message : 'Failed to process sheet'
@@ -62,7 +64,7 @@ const FileImporter: React.FC = () => {
 
     return (
         <Paper
-            className="max-w-sm"
+            className="max-w-md"
             elevation={3}
             sx={{
                 p: 3,
@@ -122,8 +124,6 @@ const FileImporter: React.FC = () => {
                 >
                     Upload
                 </Button>
-
-                <div dangerouslySetInnerHTML={{ __html }} />
             </Stack>
         </Paper>
     )
