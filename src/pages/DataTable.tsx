@@ -1,7 +1,8 @@
-import { Container } from '@mui/material'
+import { Container, Paper } from '@mui/material'
 import React from 'react'
 import type { WorkSheet } from 'xlsx'
 import FileImporter from '../components/FileImporter'
+import SheetTable from '../components/SheetTable'
 
 const DataTable: React.FC = () => {
     const [sheetData, setSheetData] = React.useState<WorkSheet | null>(null)
@@ -14,7 +15,9 @@ const DataTable: React.FC = () => {
         <Container>
             <FileImporter onSubmit={handleDataUpload} />
             {sheetData && (
-                <Container>{JSON.stringify(sheetData, null, 2)}</Container>
+                <Paper sx={{ marginTop: 2, p: 3 }}>
+                    <SheetTable worksheet={sheetData} />
+                </Paper>
             )}
         </Container>
     )
