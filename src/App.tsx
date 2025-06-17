@@ -1,10 +1,14 @@
 import FileImporter from './components/FileImporter'
+import { Container, CssBaseline } from '@mui/material'
 
 function App() {
     return (
-        <div>
-            <FileImporter />
-        </div>
+        <>
+            <CssBaseline />
+            <Container>
+                <FileImporter />
+            </Container>
+        </>
     )
 }
 
