@@ -1,4 +1,3 @@
-import './App.css'
 import FileImporter from './components/FileImporter'
 
 function App() {
