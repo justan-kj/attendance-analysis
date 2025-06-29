@@ -1,13 +1,16 @@
 import DataTable from './pages/DataTable'
-import { Container, CssBaseline } from '@mui/material'
+import { CssBaseline } from '@mui/material'
+import { BrowserRouter, Routes, Route } from 'react-router'
 
 function App() {
     return (
         <>
             <CssBaseline />
-            <Container>
-                <DataTable />
-            </Container>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<DataTable />} />
+                </Routes>
+            </BrowserRouter>
         </>
     )
 }
