@@ -64,7 +64,7 @@ const FileImporter: React.FC<FileImporterProps> = ({ onSubmit }) => {
 
     return (
         <Paper
-            className="max-w-md"
+            className="max-w-lg"
             elevation={3}
             sx={{
                 p: 3,
