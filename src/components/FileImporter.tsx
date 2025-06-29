@@ -72,7 +72,15 @@ const FileImporter: React.FC<FileImporterProps> = ({ onSubmit }) => {
                 mt: 3,
             }}
         >
-            <Stack spacing={3} sx={{ mt: 3 }}>
+            <Stack spacing={3} sx={{ mt: 1 }}>
+                <Stack direction="column" spacing={1} alignItems="center">
+                    <Typography variant="h4" noWrap={true}>
+                        Import Excel File
+                    </Typography>
+                    <Typography variant="subtitle1" noWrap={true}>
+                        Load attendance data from an Excel file for analysis
+                    </Typography>
+                </Stack>
                 <Stack direction="row" spacing={1} alignItems="center">
                     <Button
                         variant="contained"
@@ -95,24 +103,26 @@ const FileImporter: React.FC<FileImporterProps> = ({ onSubmit }) => {
                     </Typography>
                 </Stack>
 
-                {workbook && (
-                    <FormControl fullWidth variant="outlined">
-                        <InputLabel id="sheet-select-label">Sheet</InputLabel>
-                        <Select
-                            label="Sheet"
-                            value={selectedSheetname ? selectedSheetname : ''}
-                            onChange={(e) =>
-                                setSelectedSheetname(e.target.value)
-                            }
-                        >
-                            {workbook.SheetNames.map((sheetName) => (
+                <FormControl fullWidth variant="outlined">
+                    <InputLabel id="sheet-select-label">
+                        Select sheet
+                    </InputLabel>
+                    <Select
+                        label="Select sheet"
+                        value={selectedSheetname ? selectedSheetname : ''}
+                        onChange={(e) => setSelectedSheetname(e.target.value)}
+                    >
+                        {workbook ? (
+                            workbook.SheetNames.map((sheetName) => (
                                 <MenuItem value={sheetName}>
                                     {sheetName}
                                 </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                )}
+                            ))
+                        ) : (
+                            <MenuItem value="">No sheets available</MenuItem>
+                        )}
+                    </Select>
+                </FormControl>
 
                 {error && <Alert severity="error">{error}</Alert>}
 
