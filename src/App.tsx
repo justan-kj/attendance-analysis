@@ -3,6 +3,7 @@ import { CssBaseline } from '@mui/material'
 import { BrowserRouter, Routes, Route } from 'react-router'
 import { DataProvider } from './contexts/DataProvider'
 import Upload from './pages/Upload'
+import Layout from './components/Layout'
 
 function App() {
     return (
@@ -10,6 +11,7 @@ function App() {
             <CssBaseline />
             <DataProvider>
                 <BrowserRouter>
+                    <Layout />
                     <Routes>
                         <Route path="/table" element={<DataTable />} />
                         <Route path="/upload" element={<Upload />} />
