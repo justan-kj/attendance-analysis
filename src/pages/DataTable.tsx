@@ -1,22 +1,28 @@
 import { Container, Paper } from '@mui/material'
-import React from 'react'
+import React, { useContext } from 'react'
 import type { WorkSheet } from 'xlsx'
 import FileImporter from '../components/FileImporter'
 import SheetTable from '../components/SheetTable'
+import { DataContext } from '../contexts/DataContext'
 
 const DataTable: React.FC = () => {
-    const [sheetData, setSheetData] = React.useState<WorkSheet | null>(null)
+    const context = useContext(DataContext)
+    if (!context) {
+        throw new Error('DataContext not provided')
+    }
+    const { data, setData, saveData } = context
 
     const handleDataUpload = async (sheet: WorkSheet) => {
-        setSheetData(sheet)
+        setData(sheet)
+        saveData(sheet)
     }
 
     return (
         <Container>
-            <FileImporter onSubmit={handleDataUpload} />
-            {sheetData && (
+            {!data && <FileImporter onSubmit={handleDataUpload} />}
+            {data && (
                 <Paper sx={{ marginTop: 2, p: 3 }}>
-                    <SheetTable worksheet={sheetData} />
+                    <SheetTable worksheet={data} />
                 </Paper>
             )}
         </Container>
