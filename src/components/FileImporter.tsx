@@ -16,7 +16,7 @@ import {
 import UploadFileIcon from '@mui/icons-material/UploadFile'
 
 interface FileImporterProps {
-    onSubmit?: (filename: string, data: WorkSheet) => void
+    onSubmit?: (filename: string, sheetname: string, data: WorkSheet) => void
 }
 
 const FileImporter: React.FC<FileImporterProps> = ({ onSubmit }) => {
@@ -52,7 +52,11 @@ const FileImporter: React.FC<FileImporterProps> = ({ onSubmit }) => {
         }
         try {
             if (onSubmit && file) {
-                onSubmit(file.name, workbook.Sheets[selectedSheetname])
+                onSubmit(
+                    file.name,
+                    selectedSheetname,
+                    workbook.Sheets[selectedSheetname]
+                )
             }
         } catch (err) {
             setError(

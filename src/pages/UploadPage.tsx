@@ -12,8 +12,12 @@ const UploadPage: React.FC = () => {
     }
     const { data, setData, saveData, clearSavedData } = context
 
-    const handleDataUpload = async (filename: string, sheet: WorkSheet) => {
-        const data = parseExcelWorksheet(filename, sheet)
+    const handleDataUpload = async (
+        filename: string,
+        sheetname: string,
+        sheet: WorkSheet
+    ) => {
+        const data = parseExcelWorksheet(filename, sheetname, sheet)
         setData(data)
         saveData(data)
     }
@@ -27,9 +31,8 @@ const UploadPage: React.FC = () => {
             {data ? (
                 <Stack sx={{ marginTop: 6 }} spacing={1} alignItems="center">
                     <Typography variant="h5">Data Already Uploaded</Typography>
-                    <Typography variant="body1">{data.workbookName}</Typography>
-                    <Typography variant="body2">
-                        {data.worksheetName}
+                    <Typography variant="body1">
+                        {data.workbookName + ' (' + data.worksheetName + ')'}
                     </Typography>
                     <Button
                         variant="contained"

@@ -10,13 +10,14 @@ export interface ExcelTable {
 
 export const parseExcelWorksheet = (
     workbookName: string,
+    worksheetName: string,
     worksheet: WorkSheet
 ): ExcelTable => {
     const json = utils.sheet_to_json<Record<string, unknown>>(worksheet)
     if (json.length === 0) {
         return {
             workbookName,
-            worksheetName: worksheet.name,
+            worksheetName,
             headers: [],
             rows: [],
         }
@@ -26,7 +27,7 @@ export const parseExcelWorksheet = (
 
     return {
         workbookName,
-        worksheetName: worksheet.name,
+        worksheetName,
         headers,
         rows: json,
     }
