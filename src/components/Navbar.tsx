@@ -9,16 +9,12 @@ export default function Navbar() {
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
                 <Toolbar>
-                    <Button color="inherit">
-                        <Link to="/upload" style={{ color: 'inherit' }}>
-                            Upload
-                        </Link>
-                    </Button>
-                    <Button color="inherit">
-                        <Link to="/table" style={{ color: 'inherit' }}>
-                            Table
-                        </Link>
-                    </Button>
+                    <Link to="/upload" style={{ color: 'inherit' }}>
+                        <Button color="inherit">Upload</Button>
+                    </Link>{' '}
+                    <Link to="/table" style={{ color: 'inherit' }}>
+                        <Button color="inherit">Table</Button>{' '}
+                    </Link>
                 </Toolbar>
             </AppBar>
         </Box>
