@@ -18,12 +18,7 @@ const NoDataWarning: React.FC = () => {
                 zIndex: 1000,
             }}
         >
-            <Typography
-                variant="h5"
-                component="h2"
-                color="text.primary"
-                gutterBottom
-            >
+            <Typography variant="h5" component="h2" color="text.primary">
                 No Data Available
             </Typography>
 

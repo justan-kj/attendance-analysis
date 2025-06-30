@@ -1,4 +1,4 @@
-import { Container } from '@mui/material'
+import { Stack, Paper, Typography, Button } from '@mui/material'
 import React, { useContext } from 'react'
 import type { WorkSheet } from 'xlsx'
 import FileImporter from '../components/FileImporter'
@@ -10,7 +10,7 @@ const UploadPage: React.FC = () => {
     if (!context) {
         throw new Error('DataContext not provided')
     }
-    const { setData, saveData } = context
+    const { data, setData, saveData, clearSavedData } = context
 
     const handleDataUpload = async (filename: string, sheet: WorkSheet) => {
         const data = parseExcelWorksheet(filename, sheet)
@@ -18,10 +18,32 @@ const UploadPage: React.FC = () => {
         saveData(data)
     }
 
+    const handleClearData = () => {
+        clearSavedData()
+    }
+
     return (
-        <Container sx={{ marginTop: 2, padding: 3 }}>
-            <FileImporter onSubmit={handleDataUpload} />
-        </Container>
+        <>
+            {data ? (
+                <Stack sx={{ marginTop: 6 }} spacing={1} alignItems="center">
+                    <Typography variant="h5">Data Already Uploaded</Typography>
+                    <Typography variant="body1">{data.workbookName}</Typography>
+                    <Typography variant="body2">
+                        {data.worksheetName}
+                    </Typography>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleClearData}
+                        sx={{ margin: 'auto' }}
+                    >
+                        Upload New Data
+                    </Button>
+                </Stack>
+            ) : (
+                <FileImporter onSubmit={handleDataUpload} />
+            )}
+        </>
     )
 }
 
