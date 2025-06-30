@@ -1,10 +1,10 @@
 import { createContext } from 'react'
-import type { WorkSheet } from 'xlsx'
+import type { ExcelTable } from '../utils/ExcelParser'
 
 interface DataContextType {
-    data: WorkSheet | null
-    setData: (data: WorkSheet | null) => void
-    saveData: (data: WorkSheet | null) => void
+    data: ExcelTable | null
+    setData: (data: ExcelTable | null) => void
+    saveData: (data: ExcelTable | null) => void
     clearSavedData: () => void
 }
 

@@ -1,9 +1,9 @@
-import DataTable from './pages/DataTable'
+import DataTablePage from './pages/DataTablePage'
 import { CssBaseline } from '@mui/material'
 import { BrowserRouter, Routes, Route } from 'react-router'
 import { DataProvider } from './contexts/DataProvider'
-import Upload from './pages/Upload'
-import Layout from './components/Layout'
+import UploadPage from './pages/UploadPage'
+import AppLayout from './components/AppLayout'
 
 function App() {
     return (
@@ -11,10 +11,10 @@ function App() {
             <CssBaseline />
             <DataProvider>
                 <BrowserRouter>
-                    <Layout />
+                    <AppLayout />
                     <Routes>
-                        <Route path="/table" element={<DataTable />} />
-                        <Route path="/upload" element={<Upload />} />
+                        <Route path="/table" element={<DataTablePage />} />
+                        <Route path="/upload" element={<UploadPage />} />
                     </Routes>
                 </BrowserRouter>
             </DataProvider>
