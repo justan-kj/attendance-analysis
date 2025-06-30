@@ -1,44 +1,38 @@
 import React, { useState, useEffect } from 'react'
-import { utils } from 'xlsx'
-import type { WorkSheet } from 'xlsx'
+import type { ExcelTable } from '../utils/ExcelParser'
 import { DataGrid } from '@mui/x-data-grid'
-import type { GridColDef } from '@mui/x-data-grid'
+import type { GridColDef, GridRowsProp } from '@mui/x-data-grid'
 
-const SheetTable: React.FC<WorkSheet> = ({ worksheet }) => {
-    const [rows, setRows] = useState<any[]>([])
+interface SheetTableProps {
+    tableData: ExcelTable
+}
+
+const SheetTable: React.FC<SheetTableProps> = ({ tableData }) => {
+    const [tableRows, setTableRows] = useState<GridRowsProp>([])
     const [columns, setColumns] = useState<GridColDef[]>([])
 
     useEffect(() => {
-        if (worksheet) {
-            const json = utils.sheet_to_json(worksheet)
-            const colNames = new Set<string>()
-            json.forEach((row) => {
-                Object.keys(row).forEach((key) => {
-                    colNames.add(key)
-                })
-            })
-
-            const columnDefs: GridColDef[] = Array.from(colNames).map(
-                (col) => ({
-                    field: col,
-                    headerName: col,
-                    flex: 1,
-                    minWidth: 100,
-                })
-            )
-            const rowsWithIds = json.map((row, index) => ({
+        if (tableData) {
+            console.log('Table data:', tableData)
+            const columnDefs: GridColDef[] = tableData.headers.map((col) => ({
+                field: col,
+                headerName: col,
+                flex: 1,
+                minWidth: 100,
+            }))
+            const rowsWithIds = tableData.rows.map((row, index) => ({
                 id: index,
                 ...row,
             }))
 
             setColumns(columnDefs)
-            setRows(rowsWithIds)
+            setTableRows(rowsWithIds)
         }
-    }, [worksheet])
+    }, [tableData])
 
     return (
         <DataGrid
-            rows={rows}
+            rows={tableRows}
             columns={columns}
             initialState={{
                 pagination: {

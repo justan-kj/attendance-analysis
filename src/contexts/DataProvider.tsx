@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import type { WorkSheet } from 'xlsx'
+import type { ExcelTable } from '../utils/ExcelParser'
 import { DataContext } from './DataContext'
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
-    const [data, setData] = useState<WorkSheet | null>(null)
+    const [data, setData] = useState<ExcelTable | null>(null)
 
     useEffect(() => {
         try {
@@ -19,7 +19,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
         }
     }, [])
 
-    const saveData = (data: WorkSheet | null) => {
+    const saveData = (data: ExcelTable | null) => {
         try {
             localStorage.setItem('savedData', JSON.stringify(data))
         } catch (err) {

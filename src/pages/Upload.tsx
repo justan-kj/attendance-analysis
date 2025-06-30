@@ -2,6 +2,7 @@ import { Container } from '@mui/material'
 import React, { useContext } from 'react'
 import type { WorkSheet } from 'xlsx'
 import FileImporter from '../components/FileImporter'
+import { parseExcelWorksheet } from '../utils/ExcelParser'
 import { DataContext } from '../contexts/DataContext'
 
 const Upload: React.FC = () => {
@@ -9,11 +10,12 @@ const Upload: React.FC = () => {
     if (!context) {
         throw new Error('DataContext not provided')
     }
-    const { data, setData, saveData } = context
+    const { setData, saveData } = context
 
-    const handleDataUpload = async (sheet: WorkSheet) => {
-        setData(sheet)
-        saveData(sheet)
+    const handleDataUpload = async (filename: string, sheet: WorkSheet) => {
+        const data = parseExcelWorksheet(filename, sheet)
+        setData(data)
+        saveData(data)
     }
 
     return (
