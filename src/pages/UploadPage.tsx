@@ -1,4 +1,4 @@
-import { Stack, Paper, Typography, Button } from '@mui/material'
+import { Stack, Typography, Button } from '@mui/material'
 import React, { useContext } from 'react'
 import type { WorkSheet } from 'xlsx'
 import FileImporter from '../components/FileImporter'
