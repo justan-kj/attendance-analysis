@@ -12,15 +12,24 @@ const DataTablePage: React.FC = () => {
     const { data } = context
 
     return (
-        <Container>
+        <>
             {data ? (
-                <Paper sx={{ marginTop: 2, p: 3 }}>
+                <Paper
+                    sx={{
+                        marginTop: 4,
+                        p: 6,
+                        width: '90%',
+                        alignContent: 'center',
+                        marginLeft: 'auto',
+                        marginRight: 'auto',
+                    }}
+                >
                     <AttendanceDataTable tableData={data} />
                 </Paper>
             ) : (
                 <NoDataWarning />
             )}
-        </Container>
+        </>
     )
 }
 
