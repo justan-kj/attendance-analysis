@@ -7,7 +7,7 @@ interface SheetTableProps {
     tableData: ExcelTable
 }
 
-const SheetTable: React.FC<SheetTableProps> = ({ tableData }) => {
+const AttendanceDataTable: React.FC<SheetTableProps> = ({ tableData }) => {
     const [tableRows, setTableRows] = useState<GridRowsProp>([])
     const [columns, setColumns] = useState<GridColDef[]>([])
 
@@ -44,4 +44,4 @@ const SheetTable: React.FC<SheetTableProps> = ({ tableData }) => {
     )
 }
 
-export default SheetTable
+export default AttendanceDataTable

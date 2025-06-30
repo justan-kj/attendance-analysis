@@ -5,7 +5,7 @@ import FileImporter from '../components/FileImporter'
 import { parseExcelWorksheet } from '../utils/ExcelParser'
 import { DataContext } from '../contexts/DataContext'
 
-const Upload: React.FC = () => {
+const UploadPage: React.FC = () => {
     const context = useContext(DataContext)
     if (!context) {
         throw new Error('DataContext not provided')
@@ -25,4 +25,4 @@ const Upload: React.FC = () => {
     )
 }
 
-export default Upload
+export default UploadPage

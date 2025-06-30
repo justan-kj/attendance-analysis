@@ -1,10 +1,10 @@
 import { Container, Paper } from '@mui/material'
 import React, { useContext } from 'react'
-import SheetTable from '../components/SheetTable'
+import AttendanceDataTable from '../components/AttendanceDataTable'
 import { DataContext } from '../contexts/DataContext'
 import NoDataWarning from '../components/NoDataWarning'
 
-const DataTable: React.FC = () => {
+const DataTablePage: React.FC = () => {
     const context = useContext(DataContext)
     if (!context) {
         throw new Error('DataContext not provided')
@@ -15,7 +15,7 @@ const DataTable: React.FC = () => {
         <Container>
             {data ? (
                 <Paper sx={{ marginTop: 2, p: 3 }}>
-                    <SheetTable tableData={data} />
+                    <AttendanceDataTable tableData={data} />
                 </Paper>
             ) : (
                 <NoDataWarning />
@@ -24,4 +24,4 @@ const DataTable: React.FC = () => {
     )
 }
 
-export default DataTable
+export default DataTablePage
