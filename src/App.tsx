@@ -5,6 +5,7 @@ import { DataProvider } from './contexts/DataProvider'
 import UploadPage from './pages/UploadPage'
 import AppLayout from './components/AppLayout'
 import BarChartPage from './pages/BarChartPage'
+import LineChartPage from './pages/LineChartPage'
 
 function App() {
     return (
@@ -17,6 +18,10 @@ function App() {
                         <Route path="/table" element={<DataTablePage />} />
                         <Route path="/upload" element={<UploadPage />} />
                         <Route path="/barchart" element={<BarChartPage />} />
+                        <Route
+                            path="/linechart"
+                            element={<LineChartPage />}
+                        />{' '}
                     </Routes>
                 </BrowserRouter>
             </DataProvider>
