@@ -16,12 +16,12 @@ export type ColumnFilter = {
     value: number | string
 }
 
-type AggegationMode = 'sum' | 'mean' | 'max' | 'min'
+export type AggregationMode = 'sum' | 'mean' | 'max' | 'min'
 
 export type ColumnAggregation = {
     groupByColumn: string
     valueColumn: string
-    mode: AggegationMode
+    mode: AggregationMode
 }
 
 export const filterRowsByColumn = (
@@ -75,7 +75,7 @@ export const filterRowsByColumn = (
     }
 }
 
-export const aggegateRowsByColumn = (
+export const aggregateRowsByColumn = (
     rows: Record<string, unknown>[],
     agg: ColumnAggregation
 ): Record<string, unknown>[] => {
