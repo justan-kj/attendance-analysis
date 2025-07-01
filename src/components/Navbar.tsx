@@ -13,7 +13,10 @@ export default function Navbar() {
                         sx={{ flexGrow: 1 }}
                     >
                         Attendance Analysis
-                    </Typography>
+                    </Typography>{' '}
+                    <Link to="/" style={{ color: 'inherit' }}>
+                        <Button color="inherit">Home</Button>
+                    </Link>
                     <Link to="/barchart" style={{ color: 'inherit' }}>
                         <Button color="inherit">Bar Chart</Button>
                     </Link>

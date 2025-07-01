@@ -6,6 +6,7 @@ import UploadPage from './pages/UploadPage'
 import AppLayout from './components/AppLayout'
 import BarChartPage from './pages/BarChartPage'
 import LineChartPage from './pages/LineChartPage'
+import HomePage from './pages/HomePage'
 
 function App() {
     return (
@@ -15,6 +16,7 @@ function App() {
                 <BrowserRouter>
                     <AppLayout />
                     <Routes>
+                        <Route path="/" element={<HomePage />} />
                         <Route path="/table" element={<DataTablePage />} />
                         <Route path="/upload" element={<UploadPage />} />
                         <Route path="/barchart" element={<BarChartPage />} />
