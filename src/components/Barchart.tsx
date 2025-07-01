@@ -33,7 +33,7 @@ const BarChartComponent: React.FC<BarChartProps> = ({
                     },
                 ]}
                 yAxis={[{ label: y_label }]}
-                height={300}
+                height={600}
             />
         </Paper>
     )
