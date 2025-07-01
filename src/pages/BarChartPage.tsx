@@ -5,6 +5,7 @@ import { Container, Stack } from '@mui/material'
 import { aggregateRowsByColumn } from '../utils/DataProcessing'
 import type { ColumnAggregation } from '../utils/DataProcessing'
 import ChartSettings from '../components/ChartSettings'
+import NoDataWarning from '../components/NoDataWarning'
 
 const BarChartPage: React.FC = () => {
     const context = useContext(DataContext)
@@ -30,30 +31,36 @@ const BarChartPage: React.FC = () => {
     const y_values = totals.map((row) => row[aggregation.valueColumn] as number)
 
     return (
-        <Stack direction={'row'} sx={{ marginTop: 4 }} spacing={2}>
-            <Container sx={{ width: '20%' }}>
-                <ChartSettings
-                    onSubmit={onSubmit}
-                    headers={data?.headers || []}
-                />
-            </Container>
+        <>
+            {data ? (
+                <Stack direction={'row'} sx={{ marginTop: 4 }} spacing={2}>
+                    <Container sx={{ width: '20%' }}>
+                        <ChartSettings
+                            onSubmit={onSubmit}
+                            headers={data?.headers || []}
+                        />
+                    </Container>
 
-            <Stack
-                sx={{
-                    marginTop: 4,
+                    <Stack
+                        sx={{
+                            marginTop: 4,
 
-                    width: '80%',
-                }}
-                spacing={2}
-            >
-                <BarChartComponent
-                    x_values={x_values}
-                    x_label={aggregation.groupByColumn}
-                    y_values={y_values}
-                    y_label={aggregation.valueColumn}
-                />
-            </Stack>
-        </Stack>
+                            width: '80%',
+                        }}
+                        spacing={2}
+                    >
+                        <BarChartComponent
+                            x_values={x_values}
+                            x_label={aggregation.groupByColumn}
+                            y_values={y_values}
+                            y_label={aggregation.valueColumn}
+                        />
+                    </Stack>
+                </Stack>
+            ) : (
+                <NoDataWarning />
+            )}
+        </>
     )
 }
 
