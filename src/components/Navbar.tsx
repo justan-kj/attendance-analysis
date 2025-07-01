@@ -10,10 +10,13 @@ export default function Navbar() {
             <AppBar position="static">
                 <Toolbar>
                     <Link to="/upload" style={{ color: 'inherit' }}>
-                        <Button color="inherit">Upload</Button>
-                    </Link>{' '}
+                        <Button color="inherit">Upload Data</Button>
+                    </Link>
+                    <Link to="/barchart" style={{ color: 'inherit' }}>
+                        <Button color="inherit">Bar Chart</Button>
+                    </Link>
                     <Link to="/table" style={{ color: 'inherit' }}>
-                        <Button color="inherit">Table</Button>{' '}
+                        <Button color="inherit">Data Table</Button>{' '}
                     </Link>
                 </Toolbar>
             </AppBar>

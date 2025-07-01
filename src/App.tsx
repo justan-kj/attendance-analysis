@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router'
 import { DataProvider } from './contexts/DataProvider'
 import UploadPage from './pages/UploadPage'
 import AppLayout from './components/AppLayout'
+import BarChartPage from './pages/BarChartPage'
 
 function App() {
     return (
@@ -15,6 +16,7 @@ function App() {
                     <Routes>
                         <Route path="/table" element={<DataTablePage />} />
                         <Route path="/upload" element={<UploadPage />} />
+                        <Route path="/barchart" element={<BarChartPage />} />
                     </Routes>
                 </BrowserRouter>
             </DataProvider>
