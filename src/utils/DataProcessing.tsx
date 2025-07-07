@@ -30,9 +30,15 @@ export const filterRowsByColumn = (
 ): Record<string, unknown>[] => {
     switch (dataFilter.mode) {
         case 'equals':
-            return rows.filter(
-                (row) => row[dataFilter.column] === dataFilter.value
-            )
+            return rows.filter((row) => {
+                if (row[dataFilter.column] === dataFilter.value) {
+                    console.log(
+                        row[dataFilter.column],
+                        dataFilter.value as string
+                    )
+                    return true
+                }
+            })
         case 'notEquals':
             return rows.filter(
                 (row) => row[dataFilter.column] !== dataFilter.value

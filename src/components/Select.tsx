@@ -13,7 +13,7 @@ const AppSelect: React.FC<AppSelectProps> = ({
     label,
     menuItems,
 }) => {
-    const [selectedValue, setSelectedValue] = useState<string>()
+    const [selectedValue, setSelectedValue] = useState<string>('')
 
     const handleChange = (event: SelectChangeEvent) => {
         const value = event.target.value
@@ -35,8 +35,8 @@ const AppSelect: React.FC<AppSelectProps> = ({
                 label={label}
                 onChange={handleChange}
             >
-                {menuItems.map((item) => (
-                    <MenuItem key={item} value={item}>
+                {menuItems.map((item, index) => (
+                    <MenuItem key={index} value={item}>
                         {item}
                     </MenuItem>
                 ))}
