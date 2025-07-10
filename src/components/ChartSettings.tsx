@@ -4,7 +4,7 @@ import type {
     ColumnAggregation,
     AggregationMode,
 } from '../utils/DataProcessing'
-import AppSelect from './Select'
+import AppSelect from './AppSelect'
 
 export interface ChartSettingsProps {
     onSubmit: (settings: ColumnAggregation) => void
@@ -34,16 +34,19 @@ const ChartSettings: React.FC<ChartSettingsProps> = ({ onSubmit, headers }) => {
                     Chart Settings
                 </Typography>
                 <AppSelect
+                    initialValue={groupByColumn}
                     menuItems={headers}
                     label="Group Column"
                     onChange={setGroupByColumn}
                 />
                 <AppSelect
+                    initialValue={valueColumn}
                     menuItems={headers}
                     label="Value Column"
                     onChange={setValueColumn}
                 />
                 <AppSelect
+                    initialValue={mode}
                     menuItems={['sum', 'mean', 'max', 'min']}
                     label="Aggregation"
                     onChange={setMode}

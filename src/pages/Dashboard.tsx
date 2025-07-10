@@ -8,7 +8,7 @@ import {
 } from '../utils/DataProcessing'
 import type { ColumnAggregation, ColumnFilter } from '../utils/DataProcessing'
 import NoDataWarning from '../components/NoDataWarning'
-import AppSelect from '../components/Select'
+import AppSelect from '../components/AppSelect'
 
 const Dashboard: React.FC = () => {
     const context = useContext(DataContext)
