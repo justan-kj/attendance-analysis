@@ -7,6 +7,7 @@ export interface AppSelectProps {
     initialValue: string
     label: string
     menuItems: string[]
+    menuLabels?: string[]
 }
 
 const AppSelect: React.FC<AppSelectProps> = ({
@@ -14,6 +15,7 @@ const AppSelect: React.FC<AppSelectProps> = ({
     initialValue,
     label,
     menuItems,
+    menuLabels = [],
 }) => {
     const [selectedValue, setSelectedValue] = useState<string>(initialValue)
 
@@ -39,7 +41,7 @@ const AppSelect: React.FC<AppSelectProps> = ({
             >
                 {menuItems.map((item, index) => (
                     <MenuItem key={index} value={item}>
-                        {item}
+                        {menuLabels[index] || item}
                     </MenuItem>
                 ))}
             </Select>
