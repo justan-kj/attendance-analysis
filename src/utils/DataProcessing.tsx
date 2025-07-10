@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-type FilterMode =
+export type FilterMode =
     | 'equals'
     | 'notEquals'
     | 'contains'
@@ -9,6 +9,17 @@ type FilterMode =
     | 'greaterThanOrEqual'
     | 'lessThan'
     | 'lessThanOrEqual'
+
+export const filterLabels: Record<FilterMode, string> = {
+  equals: 'equals',
+  notEquals: 'does not equal',
+  contains: 'contains',
+  notContains: 'does not contain',
+  greaterThan: 'is greater than',
+  greaterThanOrEqual: 'is greater than or equal to',
+  lessThan: 'is less than',
+  lessThanOrEqual: 'is less than or equal to',
+};
 
 export type ColumnFilter = {
     column: string
