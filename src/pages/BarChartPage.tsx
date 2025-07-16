@@ -1,11 +1,15 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import BarChartComponent from '../components/Barchart'
 import { DataContext } from '../contexts/DataContext'
 import { Container, Stack } from '@mui/material'
-import { aggregateRowsByColumn } from '../utils/DataProcessing'
-import type { ColumnAggregation } from '../utils/DataProcessing'
+import {
+    aggregateRowsByColumn,
+    filterRowsByColumn,
+} from '../utils/DataProcessing'
+import type { ColumnAggregation, ColumnFilter } from '../utils/DataProcessing'
 import ChartSettings from '../components/ChartSettings'
 import NoDataWarning from '../components/NoDataWarning'
+import ChartFilters from '../components/ChartFilters'
 
 const BarChartPage: React.FC = () => {
     const context = useContext(DataContext)
@@ -19,12 +23,32 @@ const BarChartPage: React.FC = () => {
         mode: 'mean',
     })
 
+    const [filteredData, setFilteredData] = useState<Record<string, unknown>[]>(
+        data?.rows || []
+    )
+
+    useEffect(() => {
+        setFilteredData(data?.rows || [])
+    }, [data])
     const onSubmit = (settings: ColumnAggregation) => {
         setAggregation(settings)
     }
 
-    const totals = aggregateRowsByColumn(data?.rows || [], aggregation)
-    console.log('Totals:', totals)
+    const onFilterSubmit = (filters: ColumnFilter[]) => {
+        const intiialData = data?.rows || []
+        console.log('initialData:', intiialData)
+        const newData = filters.reduce((d, filter) => {
+            console.log('filter:', filter)
+            const newFilteredRows = filterRowsByColumn(d, filter)
+            console.log('newFilteredRows:', newFilteredRows)
+            return newFilteredRows
+        }, intiialData)
+
+        console.log('newData:', newData)
+        setFilteredData(newData)
+    }
+
+    const totals = aggregateRowsByColumn(filteredData || [], aggregation)
     const x_values = totals.map(
         (row) => row[aggregation.groupByColumn] as string
     )
@@ -34,7 +58,7 @@ const BarChartPage: React.FC = () => {
         <>
             {data ? (
                 <Stack direction={'row'} sx={{ marginTop: 4 }} spacing={2}>
-                    <Container sx={{ width: '20%' }}>
+                    <Container sx={{ width: '30%' }}>
                         <ChartSettings
                             onSubmit={onSubmit}
                             headers={data?.headers || []}
@@ -45,7 +69,7 @@ const BarChartPage: React.FC = () => {
                         sx={{
                             marginTop: 4,
 
-                            width: '80%',
+                            width: '70%',
                         }}
                         spacing={2}
                     >
@@ -54,6 +78,10 @@ const BarChartPage: React.FC = () => {
                             x_label={aggregation.groupByColumn}
                             y_values={y_values}
                             y_label={aggregation.valueColumn}
+                        />
+                        <ChartFilters
+                            onSubmit={onFilterSubmit}
+                            headers={data?.headers || []}
                         />
                     </Stack>
                 </Stack>
