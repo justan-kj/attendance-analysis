@@ -4,6 +4,10 @@ import { BrowserRouter, Routes, Route } from 'react-router'
 import { DataProvider } from './contexts/DataProvider'
 import UploadPage from './pages/UploadPage'
 import AppLayout from './components/AppLayout'
+import BarChartPage from './pages/BarChartPage'
+import LineChartPage from './pages/LineChartPage'
+import HomePage from './pages/HomePage'
+import Dashboard from './pages/Dashboard'
 
 function App() {
     return (
@@ -13,8 +17,12 @@ function App() {
                 <BrowserRouter>
                     <AppLayout />
                     <Routes>
+                        <Route path="/" element={<HomePage />} />
                         <Route path="/table" element={<DataTablePage />} />
                         <Route path="/upload" element={<UploadPage />} />
+                        <Route path="/barchart" element={<BarChartPage />} />
+                        <Route path="/linechart" element={<LineChartPage />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
                     </Routes>
                 </BrowserRouter>
             </DataProvider>
