@@ -7,6 +7,7 @@ interface BarChartProps {
     y_label: string
     x_values: string[]
     y_values: number[]
+    sx?: React.CSSProperties
 }
 
 const BarChartComponent: React.FC<BarChartProps> = ({
@@ -14,9 +15,10 @@ const BarChartComponent: React.FC<BarChartProps> = ({
     x_values,
     y_label,
     y_values,
+    sx = {},
 }) => {
     return (
-        <Paper>
+        <Paper sx={sx}>
             <Typography variant="h6" sx={{ padding: 3 }}>
                 {y_label} by {x_label}
             </Typography>

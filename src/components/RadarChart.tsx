@@ -7,6 +7,7 @@ interface RadarChartProps {
     labels: string[]
     max_value: number
     title?: string
+    sx?: React.CSSProperties
 }
 
 const RadarChartComponent: React.FC<RadarChartProps> = ({
@@ -14,9 +15,10 @@ const RadarChartComponent: React.FC<RadarChartProps> = ({
     labels,
     max_value,
     title = 'Radar Chart',
+    sx = {},
 }) => {
     return (
-        <Paper>
+        <Paper sx={sx}>
             <Typography variant="h6" sx={{ padding: 3 }}>
                 {title}
             </Typography>
