@@ -1,33 +1,30 @@
 import { Paper, Typography } from '@mui/material'
 import React from 'react'
-import { LineChart } from '@mui/x-charts/LineChart'
+import { BarChart } from '@mui/x-charts/BarChart'
 
-interface LineChartProps {
+interface BarChartProps {
     x_label: string
     y_label: string
     x_values: string[]
     y_values: number[]
 }
 
-const LineChartComponent: React.FC<LineChartProps> = ({
+const BarChartComponent: React.FC<BarChartProps> = ({
     x_label,
     x_values,
     y_label,
     y_values,
 }) => {
-    console.log(x_label, x_values)
-    console.log(y_label, y_values)
     return (
         <Paper>
             <Typography variant="h6" sx={{ padding: 3 }}>
                 {y_label} by {x_label}
             </Typography>
-            <LineChart
+            <BarChart
                 xAxis={[
                     {
                         label: x_label,
                         data: x_values,
-                        scaleType: 'point',
                     },
                 ]}
                 series={[
@@ -42,4 +39,4 @@ const LineChartComponent: React.FC<LineChartProps> = ({
     )
 }
 
-export default LineChartComponent
+export default BarChartComponent

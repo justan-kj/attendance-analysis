@@ -7,7 +7,7 @@ import AppLayout from './components/AppLayout'
 import BarChartPage from './pages/BarChartPage'
 import LineChartPage from './pages/LineChartPage'
 import HomePage from './pages/HomePage'
-import Dashboard from './pages/Dashboard'
+import StudentDashboard from './pages/StudentDashboard'
 
 function App() {
     return (
@@ -22,7 +22,10 @@ function App() {
                         <Route path="/upload" element={<UploadPage />} />
                         <Route path="/barchart" element={<BarChartPage />} />
                         <Route path="/linechart" element={<LineChartPage />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route
+                            path="/dashboard"
+                            element={<StudentDashboard />}
+                        />
                     </Routes>
                 </BrowserRouter>
             </DataProvider>
