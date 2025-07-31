@@ -7,6 +7,7 @@ interface BarChartProps {
     y_label: string
     x_values: string[]
     y_values: number[]
+    layout?: 'vertical' | 'horizontal'
     sx?: React.CSSProperties
 }
 
@@ -15,7 +16,8 @@ const BarChartComponent: React.FC<BarChartProps> = ({
     x_values,
     y_label,
     y_values,
-    sx = {},
+    layout = 'vertical',
+    sx = { padding: 3 },
 }) => {
     return (
         <Paper sx={sx}>
@@ -36,6 +38,7 @@ const BarChartComponent: React.FC<BarChartProps> = ({
                 ]}
                 yAxis={[{ label: y_label }]}
                 height={600}
+                layout={layout}
             />
         </Paper>
     )

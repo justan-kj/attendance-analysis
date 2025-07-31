@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import BarChartComponent from '../components/Barchart'
+import BarChartComponent from '../components/BarChart'
 import { DataContext } from '../contexts/DataContext'
 import { Container, Stack } from '@mui/material'
 import {
