@@ -19,28 +19,26 @@ const LineChartComponent: React.FC<LineChartProps> = ({
 }) => {
     return (
         <Paper sx={sx}>
-            <Typography variant="h6">
+            <Typography sx={{ padding: 2 }} variant="h6">
                 {y_label} by {x_label}
             </Typography>
-            <Container sx={{ marginTop: 2 }}>
-                <LineChart
-                    xAxis={[
-                        {
-                            label: x_label,
-                            data: x_values,
-                            scaleType: 'point',
-                        },
-                    ]}
-                    series={[
-                        {
-                            data: y_values,
-                        },
-                    ]}
-                    yAxis={[{ label: y_label, min: 0, max: 100 }]}
-                    height={500}
-                    grid={{ horizontal: true }}
-                />
-            </Container>
+            <LineChart
+                xAxis={[
+                    {
+                        label: x_label,
+                        data: x_values,
+                        scaleType: 'point',
+                    },
+                ]}
+                series={[
+                    {
+                        data: y_values,
+                    },
+                ]}
+                yAxis={[{ label: y_label, min: 0, max: 100 }]}
+                height={600}
+                grid={{ horizontal: true }}
+            />
         </Paper>
     )
 }

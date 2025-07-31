@@ -1,7 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react'
 import BarChartComponent from '../components/BarChart'
+import LineChartComponent from '../components/Linechart'
 import { DataContext } from '../contexts/DataContext'
-import { Container, Stack } from '@mui/material'
+import { Stack } from '@mui/material'
+import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
 import {
     aggregateRowsByColumn,
     filterRowsByColumn,
@@ -22,6 +25,7 @@ const BarChartPage: React.FC = () => {
         valueColumn: '% Attendance',
         mode: 'mean',
     })
+    const [chartType, setChartType] = useState('bar')
 
     const [filteredData, setFilteredData] = useState<Record<string, unknown>[]>(
         data?.rows || []
@@ -52,27 +56,41 @@ const BarChartPage: React.FC = () => {
     return (
         <>
             {data ? (
-                <Stack direction={'row'} sx={{ marginTop: 4 }} spacing={2}>
-                    <Container sx={{ width: '30%' }}>
-                        <ChartSettings
-                            onSubmit={onSubmit}
-                            headers={data?.headers || []}
-                        />
-                    </Container>
-
+                <Stack direction={'row'} sx={{ padding: 2 }} spacing={2}>
                     <Stack
                         sx={{
-                            marginTop: 4,
-
-                            width: '70%',
+                            flex: 3,
                         }}
                         spacing={2}
                     >
-                        <BarChartComponent
-                            x_values={x_values}
-                            x_label={aggregation.groupByColumn}
-                            y_values={y_values}
-                            y_label={aggregation.valueColumn}
+                        <Tabs
+                            value={chartType}
+                            onChange={(_, value) => setChartType(value)}
+                        >
+                            <Tab label="Bar Chart" value="bar" />
+                            <Tab label="Line Chart" value="line" />
+                        </Tabs>
+                        {chartType == 'bar' && (
+                            <BarChartComponent
+                                x_values={x_values}
+                                x_label={aggregation.groupByColumn}
+                                y_values={y_values}
+                                y_label={aggregation.valueColumn}
+                            />
+                        )}
+                        {chartType == 'line' && (
+                            <LineChartComponent
+                                x_values={x_values}
+                                x_label={aggregation.groupByColumn}
+                                y_values={y_values}
+                                y_label={aggregation.valueColumn}
+                            />
+                        )}
+                    </Stack>
+                    <Stack spacing={2} sx={{ flex: 1 }}>
+                        <ChartSettings
+                            onSubmit={onSubmit}
+                            headers={data?.headers || []}
                         />
                         <ChartFilters
                             onSubmit={onFilterSubmit}
