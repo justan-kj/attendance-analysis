@@ -16,6 +16,9 @@ export default function Navbar() {
                     </Typography>{' '}
                     <Link to="/" style={{ color: 'inherit' }}>
                         <Button color="inherit">Home</Button>
+                    </Link>{' '}
+                    <Link to="/dashboard" style={{ color: 'inherit' }}>
+                        <Button color="inherit">Dashboard</Button>
                     </Link>
                     <Link to="/customchart" style={{ color: 'inherit' }}>
                         <Button color="inherit">Custom Chart</Button>

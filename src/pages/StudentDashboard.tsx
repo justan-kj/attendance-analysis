@@ -9,7 +9,7 @@ import {
     aggregateRowsByColumn,
     filterRowsByColumn,
 } from '../utils/DataProcessing'
-import type { ColumnAggregation, ColumnFilter } from '../utils/DataProcessing'
+import type { ColumnFilter } from '../utils/DataProcessing'
 import NoDataWarning from '../components/NoDataWarning'
 import _ from 'lodash'
 import type { PieValueType } from '@mui/x-charts'
