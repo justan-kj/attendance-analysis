@@ -8,6 +8,28 @@ export interface ExcelTable {
     rows: Record<string, unknown>[]
 }
 
+export interface DataRow {
+    User: string
+    'Last Submitted': Date | undefined
+    'Last Attendence': Date | undefined
+    'Last Attended (AA)': Date | undefined
+    '% Attendance': number | undefined
+    'Level of Study': string | undefined
+    'Course Title': string | undefined
+    'Year of Course': number | undefined
+    'Registration Status': string | undefined
+    'Academic Advising Sessions': number | undefined
+    'Attended (AA)': number | undefined
+    'Explained Non Attendances (AA)': number | undefined
+    'Non Attendances (AA)': number | undefined
+    'Attendance Not Recorded (AA)': number | undefined
+    Assessments: number | undefined
+    Submitted: number | undefined
+    'Explained Non-Submission': number | undefined
+    'Non-Submission': number | undefined
+    [key: string]: string | number | Date | undefined
+}
+
 const ExcelDateToJSDate = (date: number) => {
     return new Date(Math.round((date - 25569) * 86400 * 1000))
 }

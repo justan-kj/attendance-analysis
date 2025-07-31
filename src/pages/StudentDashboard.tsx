@@ -14,16 +14,40 @@ import NoDataWarning from '../components/NoDataWarning'
 import _ from 'lodash'
 import type { PieValueType } from '@mui/x-charts'
 
+interface StudentData {
+    User?: string
+    'Last Submitted'?: string
+    'Last Attendence'?: string
+    'Last Attended (AA)'?: string
+    'Academic Advising Sessions'?: number
+    'Attended (AA)'?: number
+    'Explained Non Attendances (AA)'?: number
+    'Non Attendances (AA)'?: number
+    'Attendance Not Recorded (AA)'?: number
+    'Level of Study'?: string
+    'Course Title'?: string
+    'Year of Course'?: string
+    'Registration Status'?: string
+    Assessments?: number
+    Submitted?: number
+    'Explained Non-Submission'?: number
+    'Non Submission'?: number
+    '% Attendance'?: number
+    [key: string]: string | number | Date | boolean | null | undefined
+}
+
 const StudentDashboard: React.FC = () => {
     const context = useContext(DataContext)
     if (!context) {
         throw new Error('DataContext not provided')
     }
     const { data } = context
-    const [studentData, setStudentData] = useState<any[]>([])
+    const [studentData, setStudentData] = useState<Record<string, unknown>[]>(
+        []
+    )
     const [student_id, setStudentId] = useState<string>('')
 
-    const addDataDate = (row: any) => {
+    const addDataDate = (row: Record<string, unknown>) => {
         const date =
             row['Last Submitted'] ||
             row['Last Attendence'] ||
@@ -50,7 +74,7 @@ const StudentDashboard: React.FC = () => {
         setStudentData(sortedData)
     }, [data, student_id])
 
-    const getLatestData = () => {
+    const getLatestData: () => StudentData = () => {
         const lastRowData = _.last(studentData)
         if (!lastRowData) {
             return {}
@@ -75,7 +99,7 @@ const StudentDashboard: React.FC = () => {
         }
     }
 
-    const latest_data = getLatestData()
+    const latest_data: StudentData = getLatestData()
 
     const attendanceData = aggregateRowsByColumn(studentData || [], {
         groupByColumn: 'Date',
@@ -83,11 +107,9 @@ const StudentDashboard: React.FC = () => {
         mode: 'mean',
     }).filter((row) => row['Date'] !== 'undefined')
 
-    console.log('Attendance Data:', attendanceData)
-
     const getPieSeries = (keys: string[]) => {
         const series = keys.map((key, index) => {
-            if (latest_data[key] > 0) {
+            if ((latest_data[key] as number) > 0) {
                 return {
                     id: `${index}`,
                     value: latest_data[key],
@@ -96,15 +118,6 @@ const StudentDashboard: React.FC = () => {
             }
         })
         return series as PieValueType[]
-    }
-
-    const assessmentValues = {
-        total: latest_data['Assessments'] as number,
-        submitted: latest_data['Submitted'] as number,
-        explained_non_submission: latest_data[
-            'Explained Non-Submission'
-        ] as number,
-        non_submission: latest_data['Non-Submission'] as number,
     }
 
     return (
@@ -158,7 +171,7 @@ const StudentDashboard: React.FC = () => {
                     />
                     <Stack sx={{ flex: 1 }} spacing={4}>
                         <GaugeChartComponent
-                            value={latest_data['Submitted']}
+                            value={latest_data['Submitted'] || 0}
                             valueMax={latest_data['Assessments']}
                             title="Assessments Submitted"
                             placeholder={
@@ -183,7 +196,7 @@ const StudentDashboard: React.FC = () => {
                     </Stack>
                     <Stack sx={{ flex: 1 }} spacing={4}>
                         <GaugeChartComponent
-                            value={latest_data['Attended (AA)']}
+                            value={latest_data['Attended (AA)'] || 0}
                             valueMax={latest_data['Academic Advising Sessions']}
                             title="Academic Advising Sessions"
                             placeholder={
