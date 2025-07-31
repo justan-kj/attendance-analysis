@@ -24,7 +24,6 @@ const LineChartPage: React.FC = () => {
     }
 
     const totals = aggregateRowsByColumn(data?.rows || [], aggregation)
-    console.log('Totals:', totals)
     const x_values = totals.map(
         (row) => row[aggregation.groupByColumn] as string
     )

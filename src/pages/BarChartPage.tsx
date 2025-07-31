@@ -36,15 +36,10 @@ const BarChartPage: React.FC = () => {
 
     const onFilterSubmit = (filters: ColumnFilter[]) => {
         const intiialData = data?.rows || []
-        console.log('initialData:', intiialData)
         const newData = filters.reduce((d, filter) => {
-            console.log('filter:', filter)
             const newFilteredRows = filterRowsByColumn(d, filter)
-            console.log('newFilteredRows:', newFilteredRows)
             return newFilteredRows
         }, intiialData)
-
-        console.log('newData:', newData)
         setFilteredData(newData)
     }
 
