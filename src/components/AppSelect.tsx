@@ -8,6 +8,7 @@ export interface AppSelectProps {
     label: string
     menuItems: string[]
     menuLabels?: string[]
+    sx?: React.CSSProperties
 }
 
 const AppSelect: React.FC<AppSelectProps> = ({
@@ -16,6 +17,7 @@ const AppSelect: React.FC<AppSelectProps> = ({
     label,
     menuItems,
     menuLabels = [],
+    sx = { margin: 2 },
 }) => {
     const [selectedValue, setSelectedValue] = useState<string>(initialValue)
 
@@ -25,12 +27,7 @@ const AppSelect: React.FC<AppSelectProps> = ({
         onChange(value)
     }
     return (
-        <FormControl
-            fullWidth
-            sx={{
-                margin: 2,
-            }}
-        >
+        <FormControl fullWidth sx={sx}>
             <InputLabel id="select-label">{label}</InputLabel>
             <Select
                 labelId="select-label"
