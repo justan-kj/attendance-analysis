@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import type { DataRow } from './ExcelParser'
 
 export type FilterMode =
     | 'equals'
@@ -36,9 +37,9 @@ export type ColumnAggregation = {
 }
 
 export const filterRowsByColumn = (
-    rows: Record<string, unknown>[],
+    rows: DataRow[],
     dataFilter: ColumnFilter
-): Record<string, unknown>[] => {
+): DataRow[] => {
     switch (dataFilter.mode) {
         case 'equals':
             return rows.filter((row) => {
@@ -89,7 +90,7 @@ export const filterRowsByColumn = (
 }
 
 export const aggregateRowsByColumn = (
-    rows: Record<string, unknown>[],
+    rows: DataRow[],
     agg: ColumnAggregation
 ): Record<string, unknown>[] => {
     const groups = _.groupBy(rows, agg.groupByColumn)

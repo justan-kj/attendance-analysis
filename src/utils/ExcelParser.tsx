@@ -1,6 +1,6 @@
 import { utils } from 'xlsx'
 import type { WorkSheet } from 'xlsx'
-
+import _ from 'lodash'
 export interface ExcelTable {
     workbookName: string
     worksheetName: string
@@ -30,16 +30,17 @@ export interface DataRow {
     [key: string]: string | number | Date | undefined
 }
 
-const ExcelDateToJSDate = (date: number) => {
-    return new Date(Math.round((date - 25569) * 86400 * 1000))
-}
-
 export const parseExcelWorksheet = (
     workbookName: string,
     worksheetName: string,
     worksheet: WorkSheet
 ): ExcelTable => {
-    const json = utils.sheet_to_json<Record<string, unknown>>(worksheet)
+    const json = utils.sheet_to_json<Record<string, unknown>>(worksheet, {
+        raw: false,
+        dateNF: 'yyyy-mm-dd',
+        defval: null,
+        blankrows: false,
+    })
     if (json.length === 0) {
         return {
             workbookName,
@@ -50,17 +51,9 @@ export const parseExcelWorksheet = (
     }
 
     const headers = Array.from(new Set(json.flatMap((row) => Object.keys(row))))
-
     const formattedRows = json.map((row) => {
         const newRow = { ...row }
-
         Object.keys(row).forEach((key) => {
-            if (
-                key.toLowerCase().startsWith('last') &&
-                typeof row[key] === 'number'
-            ) {
-                newRow[key] = ExcelDateToJSDate(row[key] as number)
-            }
             if (
                 key.toLowerCase().startsWith('%') &&
                 typeof row[key] === 'number'
@@ -68,14 +61,20 @@ export const parseExcelWorksheet = (
                 newRow[key] = row[key] * 100
             }
         })
-
+        newRow['Last Date'] = _.max([
+            row['Last Submitted'],
+            row['Last Attendence'],
+            row['Last Attended (AA)'],
+        ])
         return newRow
     })
+    console.log('Formatted Rows:', formattedRows)
+    const dataRows = _.sortBy(formattedRows, (row) => row['Last Date'])
 
     return {
         workbookName,
         worksheetName,
         headers,
-        rows: formattedRows,
+        rows: dataRows,
     }
 }

@@ -17,7 +17,7 @@ import { useData } from '../hook/useData'
 import StudentSummary from '../components/StudentSummary'
 
 const StudentDashboard: React.FC = () => {
-    const data = useData()
+    const { data } = useData()
     const [studentData, setStudentData] = useState<DataRow[]>([])
     const [student_id, setStudentId] = useState<string>('')
 

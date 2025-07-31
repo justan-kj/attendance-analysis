@@ -7,5 +7,8 @@ export const useData = () => {
     if (!context) {
         throw new Error('No DataProvider')
     }
-    return context?.data?.rows as DataRow[]
+    return {
+        data: context?.data?.rows as DataRow[],
+        headers: context?.data?.headers || [],
+    }
 }

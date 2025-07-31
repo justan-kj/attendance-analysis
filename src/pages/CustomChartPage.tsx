@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import BarChartComponent from '../components/BarChart'
 import LineChartComponent from '../components/Linechart'
-import { DataContext } from '../contexts/DataContext'
+import { useData } from '../hook/useData'
 import { Stack } from '@mui/material'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
@@ -13,13 +13,10 @@ import type { ColumnAggregation, ColumnFilter } from '../utils/DataProcessing'
 import ChartSettings from '../components/ChartSettings'
 import NoDataWarning from '../components/NoDataWarning'
 import ChartFilters from '../components/ChartFilters'
+import type { DataRow } from '../utils/ExcelParser'
 
-const BarChartPage: React.FC = () => {
-    const context = useContext(DataContext)
-    if (!context) {
-        throw new Error('DataContext not provided')
-    }
-    const { data } = context
+const CustomChartPage: React.FC = () => {
+    const { data, headers } = useData()
     const [aggregation, setAggregation] = useState<ColumnAggregation>({
         groupByColumn: 'Year of Course',
         valueColumn: '% Attendance',
@@ -27,23 +24,21 @@ const BarChartPage: React.FC = () => {
     })
     const [chartType, setChartType] = useState('bar')
 
-    const [filteredData, setFilteredData] = useState<Record<string, unknown>[]>(
-        data?.rows || []
-    )
+    const [filteredData, setFilteredData] = useState<DataRow[]>(data)
 
     useEffect(() => {
-        setFilteredData(data?.rows || [])
+        setFilteredData(data)
     }, [data])
     const onSubmit = (settings: ColumnAggregation) => {
         setAggregation(settings)
     }
 
-    const onFilterSubmit = (filters: ColumnFilter[]) => {
-        const intiialData = data?.rows || []
+    const onFilter = (filters: ColumnFilter[]) => {
+        const initialData = data
         const newData = filters.reduce((d, filter) => {
             const newFilteredRows = filterRowsByColumn(d, filter)
             return newFilteredRows
-        }, intiialData)
+        }, initialData)
         setFilteredData(newData)
     }
 
@@ -88,14 +83,8 @@ const BarChartPage: React.FC = () => {
                         )}
                     </Stack>
                     <Stack spacing={2} sx={{ flex: 1 }}>
-                        <ChartSettings
-                            onSubmit={onSubmit}
-                            headers={data?.headers || []}
-                        />
-                        <ChartFilters
-                            onSubmit={onFilterSubmit}
-                            headers={data?.headers || []}
-                        />
+                        <ChartSettings onSubmit={onSubmit} headers={headers} />
+                        <ChartFilters onSubmit={onFilter} headers={headers} />
                     </Stack>
                 </Stack>
             ) : (
@@ -105,4 +94,4 @@ const BarChartPage: React.FC = () => {
     )
 }
 
-export default BarChartPage
+export default CustomChartPage
