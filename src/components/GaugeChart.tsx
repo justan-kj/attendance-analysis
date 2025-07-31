@@ -1,44 +1,57 @@
-import { Paper, Typography } from '@mui/material'
+import { Container, Paper, Typography } from '@mui/material'
 import React from 'react'
-import { BarChart } from '@mui/x-charts/BarChart'
+import { Gauge, gaugeClasses } from '@mui/x-charts'
 
-interface BarChartProps {
-    x_label: string
-    y_label: string
-    x_values: string[]
-    y_values: number[]
+interface GaugeChartProps {
+    value: number
+    valueMax?: number
+    title?: string
+    placeholder?: string
     sx?: React.CSSProperties
 }
 
-const BarChartComponent: React.FC<BarChartProps> = ({
-    x_label,
-    x_values,
-    y_label,
-    y_values,
-    sx = {},
+const GaugeChartComponent: React.FC<GaugeChartProps> = ({
+    value,
+    valueMax,
+    title = 'Gauge Chart',
+    placeholder,
+    sx = { padding: 3 },
 }) => {
+    const gauge_text = valueMax ? ` ${value}  / ${valueMax}` : ''
+
     return (
         <Paper sx={sx}>
-            <Typography variant="h6" sx={{ padding: 3 }}>
-                {y_label} by {x_label}
-            </Typography>
-            <BarChart
-                xAxis={[
-                    {
-                        label: x_label,
-                        data: x_values,
-                    },
-                ]}
-                series={[
-                    {
-                        data: y_values,
-                    },
-                ]}
-                yAxis={[{ label: y_label }]}
-                height={600}
-            />
+            <Typography variant="h6">{title}</Typography>
+            <Container sx={{ marginTop: 2 }}>
+                {placeholder ? (
+                    <Typography
+                        variant="subtitle1"
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        {placeholder}
+                    </Typography>
+                ) : (
+                    <Gauge
+                        value={value}
+                        valueMax={valueMax ? valueMax : 100}
+                        startAngle={-95}
+                        endAngle={95}
+                        text={gauge_text}
+                        height={200}
+                        sx={{
+                            [`& .${gaugeClasses.valueText}`]: {
+                                fontSize: 30,
+                                transform: 'translate(0px, -20px)',
+                            },
+                        }}
+                    />
+                )}
+            </Container>
         </Paper>
     )
 }
 
-export default BarChartComponent
+export default GaugeChartComponent
