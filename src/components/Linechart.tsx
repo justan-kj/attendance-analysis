@@ -36,8 +36,9 @@ const LineChartComponent: React.FC<LineChartProps> = ({
                             data: y_values,
                         },
                     ]}
-                    yAxis={[{ label: y_label }]}
-                    height={600}
+                    yAxis={[{ label: y_label, min: 0, max: 100 }]}
+                    height={500}
+                    grid={{ horizontal: true }}
                 />
             </Container>
         </Paper>
