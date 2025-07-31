@@ -1,4 +1,4 @@
-import { Paper, Typography } from '@mui/material'
+import { Paper, Typography, Container } from '@mui/material'
 import React from 'react'
 import { LineChart } from '@mui/x-charts/LineChart'
 
@@ -7,6 +7,7 @@ interface LineChartProps {
     y_label: string
     x_values: string[]
     y_values: number[]
+    sx?: React.CSSProperties
 }
 
 const LineChartComponent: React.FC<LineChartProps> = ({
@@ -14,10 +15,11 @@ const LineChartComponent: React.FC<LineChartProps> = ({
     x_values,
     y_label,
     y_values,
+    sx = { padding: 3 },
 }) => {
     return (
-        <Paper>
-            <Typography variant="h6" sx={{ padding: 3 }}>
+        <Paper sx={sx}>
+            <Typography sx={{ padding: 2 }} variant="h6">
                 {y_label} by {x_label}
             </Typography>
             <LineChart
@@ -25,6 +27,7 @@ const LineChartComponent: React.FC<LineChartProps> = ({
                     {
                         label: x_label,
                         data: x_values,
+                        scaleType: 'point',
                     },
                 ]}
                 series={[
@@ -32,8 +35,9 @@ const LineChartComponent: React.FC<LineChartProps> = ({
                         data: y_values,
                     },
                 ]}
-                yAxis={[{ label: y_label }]}
+                yAxis={[{ label: y_label, min: 0, max: 100 }]}
                 height={600}
+                grid={{ horizontal: true }}
             />
         </Paper>
     )

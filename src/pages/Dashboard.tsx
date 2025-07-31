@@ -24,7 +24,6 @@ const Dashboard: React.FC = () => {
     }
 
     const aggregatedData = aggregateRowsByColumn(data?.rows || [], aggregation)
-    console.log('Aggregated Data:', aggregatedData)
 
     const [filteredData, setFilteredData] = useState(aggregatedData)
 
@@ -34,15 +33,13 @@ const Dashboard: React.FC = () => {
             value: filterValue as string,
             mode: 'equals',
         }
-        console.log('Applying Filter:', filter)
         const newData = filterRowsByColumn(aggregatedData, filter)
         setFilteredData(newData)
-        console.log('Filtered Data:', newData)
     }
 
     const users = useMemo(() => {
         if (!data?.rows) return []
-        console.log('Filtering')
+
         return data.rows.map((row) => row[aggregation.groupByColumn] as string)
     }, [data?.rows, aggregation.groupByColumn])
 

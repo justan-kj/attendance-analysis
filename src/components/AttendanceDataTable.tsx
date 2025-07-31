@@ -13,7 +13,6 @@ const AttendanceDataTable: React.FC<SheetTableProps> = ({ tableData }) => {
 
     useEffect(() => {
         if (tableData) {
-            console.log('Table data:', tableData)
             const columnDefs: GridColDef[] = tableData.headers.map((col) => ({
                 field: col,
                 headerName: col,

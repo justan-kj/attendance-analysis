@@ -16,12 +16,12 @@ export default function Navbar() {
                     </Typography>{' '}
                     <Link to="/" style={{ color: 'inherit' }}>
                         <Button color="inherit">Home</Button>
+                    </Link>{' '}
+                    <Link to="/dashboard" style={{ color: 'inherit' }}>
+                        <Button color="inherit">Dashboard</Button>
                     </Link>
-                    <Link to="/barchart" style={{ color: 'inherit' }}>
-                        <Button color="inherit">Bar Chart</Button>
-                    </Link>
-                    <Link to="/linechart" style={{ color: 'inherit' }}>
-                        <Button color="inherit">Line Chart</Button>
+                    <Link to="/customchart" style={{ color: 'inherit' }}>
+                        <Button color="inherit">Custom Chart</Button>
                     </Link>
                     <Link to="/table" style={{ color: 'inherit' }}>
                         <Button color="inherit">Data Table</Button>{' '}
