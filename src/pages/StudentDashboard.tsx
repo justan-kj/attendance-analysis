@@ -1,66 +1,28 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import LineChartComponent from '../components/Linechart'
 import GaugeChartComponent from '../components/GaugeChart'
 import PieChartComponent from '../components/PieChart'
-import { DataContext } from '../contexts/DataContext'
-import { Paper, Stack, Typography } from '@mui/material'
+import { Stack } from '@mui/material'
 import StudentSelector from '../components/StudentSelector'
 import {
     aggregateRowsByColumn,
     filterRowsByColumn,
 } from '../utils/DataProcessing'
 import type { ColumnFilter } from '../utils/DataProcessing'
+import type { DataRow } from '../utils/ExcelParser'
 import NoDataWarning from '../components/NoDataWarning'
 import _ from 'lodash'
 import type { PieValueType } from '@mui/x-charts'
-
-interface StudentData {
-    User?: string
-    'Last Submitted'?: string
-    'Last Attendence'?: string
-    'Last Attended (AA)'?: string
-    'Academic Advising Sessions'?: number
-    'Attended (AA)'?: number
-    'Explained Non Attendances (AA)'?: number
-    'Non Attendances (AA)'?: number
-    'Attendance Not Recorded (AA)'?: number
-    'Level of Study'?: string
-    'Course Title'?: string
-    'Year of Course'?: string
-    'Registration Status'?: string
-    Assessments?: number
-    Submitted?: number
-    'Explained Non-Submission'?: number
-    'Non Submission'?: number
-    '% Attendance'?: number
-    [key: string]: string | number | Date | boolean | null | undefined
-}
+import { useData } from '../hook/useData'
+import StudentSummary from '../components/StudentSummary'
 
 const StudentDashboard: React.FC = () => {
-    const context = useContext(DataContext)
-    if (!context) {
-        throw new Error('DataContext not provided')
-    }
-    const { data } = context
-    const [studentData, setStudentData] = useState<Record<string, unknown>[]>(
-        []
-    )
+    const data = useData()
+    const [studentData, setStudentData] = useState<DataRow[]>([])
     const [student_id, setStudentId] = useState<string>('')
-
-    const addDataDate = (row: Record<string, unknown>) => {
-        const date =
-            row['Last Submitted'] ||
-            row['Last Attendence'] ||
-            row['Last Attended (AA)']
-        return {
-            ...row,
-            Date: date,
-        }
-    }
 
     useEffect(() => {
         if (!data) {
-            setStudentData([])
             return
         }
         const filter: ColumnFilter = {
@@ -68,16 +30,13 @@ const StudentDashboard: React.FC = () => {
             mode: 'equals',
             value: student_id,
         }
-        const filteredData = filterRowsByColumn(data.rows, filter)
-        const datedData = filteredData.map(addDataDate)
-        const sortedData = _.sortBy(datedData, (row) => row['Date'])
-        setStudentData(sortedData)
+        setStudentData(filterRowsByColumn(data, filter))
     }, [data, student_id])
 
-    const getLatestData: () => StudentData = () => {
+    const getLatestData = () => {
         const lastRowData = _.last(studentData)
         if (!lastRowData) {
-            return {}
+            return {} as DataRow
         }
         return {
             ...lastRowData,
@@ -96,16 +55,18 @@ const StudentDashboard: React.FC = () => {
             'Attendance Not Recorded (AA)': _.max(
                 studentData.map((row) => row['Attendance Not Recorded (AA)'])
             ),
-        }
+        } as DataRow
     }
 
-    const latest_data: StudentData = getLatestData()
+    const latest_data = getLatestData()
 
-    const attendanceData = aggregateRowsByColumn(studentData || [], {
-        groupByColumn: 'Date',
+    console.log('Stiudent Data:', studentData)
+
+    const attendanceData = aggregateRowsByColumn(studentData, {
+        groupByColumn: 'Last Date',
         valueColumn: '% Attendance',
         mode: 'mean',
-    }).filter((row) => row['Date'] !== 'undefined')
+    }).filter((row) => row['Last Date'])
 
     const getPieSeries = (keys: string[]) => {
         const series = keys.map((key, index) => {
@@ -135,37 +96,16 @@ const StudentDashboard: React.FC = () => {
                             onSelect={(id) => setStudentId(id)}
                             sx={{ padding: 3 }}
                         />
-                        <Paper>
-                            <Stack spacing={2} sx={{ padding: 3 }}>
-                                <Typography variant="h6">
-                                    Student Overview
-                                </Typography>
-                                <Typography variant="subtitle1">
-                                    Level of Study:{' '}
-                                    {latest_data['Level of Study']}
-                                </Typography>{' '}
-                                <Typography variant="subtitle1">
-                                    Course:{' '}
-                                    {latest_data['Course Title'] || 'N/A'}
-                                </Typography>
-                                <Typography variant="subtitle1">
-                                    Year of Course:{' '}
-                                    {latest_data['Year of Course']}
-                                </Typography>
-                                <Typography variant="subtitle1">
-                                    Registration Status:{' '}
-                                    {latest_data['Registration Status'] ||
-                                        'N/A'}
-                                </Typography>
-                            </Stack>
-                        </Paper>
+                        <StudentSummary data={latest_data} />
                     </Stack>
                     <LineChartComponent
-                        x_values={_.map(attendanceData, 'Date') as string[]}
-                        x_label={'Date'}
-                        y_values={
-                            _.map(attendanceData, '% Attendance') as number[]
+                        x_values={
+                            _.map(attendanceData, 'Last Date') as string[]
                         }
+                        x_label={'Date'}
+                        y_values={attendanceData.map(
+                            (row) => (row['% Attendance'] as number) * 100 || 0
+                        )}
                         y_label={'% Attendance'}
                         sx={{ flex: 2, padding: 3 }}
                     />

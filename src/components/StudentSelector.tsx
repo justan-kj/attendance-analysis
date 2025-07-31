@@ -20,7 +20,6 @@ const StudentSelector: React.FC<StudentSelectorProps> = ({
         throw new Error('DataContext not provided')
     }
     const { data } = context
-    const [selectedValue, setSelectedValue] = useState<string>('')
     const [studentGroup, setStudentGroup] = useState<string>('')
     const [attendanceThreshold, setAttendanceThreshold] = useState<number>(50)
 
@@ -55,7 +54,6 @@ const StudentSelector: React.FC<StudentSelectorProps> = ({
     }
 
     const handleSelect = (studentId: string) => {
-        setSelectedValue(studentId)
         if (onSelect) {
             onSelect(studentId)
         }
