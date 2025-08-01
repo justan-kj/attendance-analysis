@@ -65,10 +65,9 @@ export const parseExcelWorksheet = (
             row['Last Submitted'],
             row['Last Attendence'],
             row['Last Attended (AA)'],
-        ])
+        ]) as Date | undefined
         return newRow
     })
-    console.log('Formatted Rows:', formattedRows)
     const dataRows = _.sortBy(formattedRows, (row) => row['Last Date'])
 
     return {

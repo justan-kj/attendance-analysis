@@ -92,9 +92,9 @@ export const filterRowsByColumn = (
 export const aggregateRowsByColumn = (
     rows: DataRow[],
     agg: ColumnAggregation
-): Record<string, unknown>[] => {
+): DataRow[] => {
     const groups = _.groupBy(rows, agg.groupByColumn)
-    const aggregatedRows: Record<string, unknown>[] = []
+    const aggregatedRows: DataRow[] = []
 
     for (const groupKey in groups) {
         const groupRows = groups[groupKey]
@@ -140,7 +140,7 @@ export const aggregateRowsByColumn = (
         aggregatedRows.push({
             [agg.groupByColumn]: groupKey,
             [agg.valueColumn]: aggregatedValue,
-        })
+        } as DataRow)
     }
     return aggregatedRows
 }
