@@ -18,7 +18,6 @@ const LineChartComponent: React.FC<LineChartProps> = ({
     sx = { padding: 3 },
 }) => {
     const isDateData = x_values.length > 0 && x_values[0] instanceof Date
-    console.log('Is Date Data:', x_values)
     let processedXValues = x_values
     let processedYValues = y_values
 
@@ -33,8 +32,6 @@ const LineChartComponent: React.FC<LineChartProps> = ({
 
         processedXValues = dataPoints.map((point) => point.x)
         processedYValues = dataPoints.map((point) => point.y)
-        console.log('Processed X Values:', processedXValues)
-        console.log('Processed Y Values:', processedYValues)
     }
     const scaleType = isDateData ? 'time' : 'point'
     return (
