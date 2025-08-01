@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import BarChartComponent from '../components/BarChart'
-import LineChartComponent from '../components/Linechart'
+import LineChartComponent from '../components/LineChart'
 import { useData } from '../hook/useData'
 import { Stack } from '@mui/material'
 import Tab from '@mui/material/Tab'

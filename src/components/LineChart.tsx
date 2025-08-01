@@ -5,7 +5,7 @@ import { LineChart } from '@mui/x-charts/LineChart'
 interface LineChartProps {
     x_label: string
     y_label: string
-    x_values: string[]
+    x_values: string[] | Date[]
     y_values: number[]
     sx?: React.CSSProperties
 }
@@ -17,6 +17,26 @@ const LineChartComponent: React.FC<LineChartProps> = ({
     y_values,
     sx = { padding: 3 },
 }) => {
+    const isDateData = x_values.length > 0 && x_values[0] instanceof Date
+    console.log('Is Date Data:', x_values)
+    let processedXValues = x_values
+    let processedYValues = y_values
+
+    if (isDateData) {
+        // Create pairs and sort by date
+        const dataPoints = x_values
+            .map((x, index) => ({
+                x: x as Date,
+                y: y_values[index],
+            }))
+            .sort((a, b) => a.x.getTime() - b.x.getTime())
+
+        processedXValues = dataPoints.map((point) => point.x)
+        processedYValues = dataPoints.map((point) => point.y)
+        console.log('Processed X Values:', processedXValues)
+        console.log('Processed Y Values:', processedYValues)
+    }
+    const scaleType = isDateData ? 'time' : 'point'
     return (
         <Paper sx={sx}>
             <Typography sx={{ padding: 2 }} variant="h6">
@@ -26,13 +46,13 @@ const LineChartComponent: React.FC<LineChartProps> = ({
                 xAxis={[
                     {
                         label: x_label,
-                        data: x_values,
-                        scaleType: 'point',
+                        data: processedXValues,
+                        scaleType: scaleType,
                     },
                 ]}
                 series={[
                     {
-                        data: y_values,
+                        data: processedYValues,
                     },
                 ]}
                 yAxis={[{ label: y_label, min: 0, max: 100 }]}
