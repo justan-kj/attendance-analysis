@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import LineChartComponent from '../components/Linechart'
+import LineChartComponent from '../components/LineChart'
 import GaugeChartComponent from '../components/GaugeChart'
 import PieChartComponent from '../components/PieChart'
 import { Stack } from '@mui/material'
@@ -19,7 +19,7 @@ import StudentSummary from '../components/StudentSummary'
 const StudentDashboard: React.FC = () => {
     const { data } = useData()
     const [studentData, setStudentData] = useState<DataRow[]>([])
-    const [student_id, setStudentId] = useState<string>('')
+    const [studentId, setStudentId] = useState<string>('')
 
     useEffect(() => {
         if (!data) {
@@ -28,10 +28,10 @@ const StudentDashboard: React.FC = () => {
         const filter: ColumnFilter = {
             column: 'User',
             mode: 'equals',
-            value: student_id,
+            value: studentId,
         }
         setStudentData(filterRowsByColumn(data, filter))
-    }, [data, student_id])
+    }, [data, studentId])
 
     const getLatestData = () => {
         const lastRowData = _.last(studentData)
@@ -57,23 +57,24 @@ const StudentDashboard: React.FC = () => {
             ),
         } as DataRow
     }
-
-    const latest_data = getLatestData()
-
-    console.log('Stiudent Data:', studentData)
+    const latestData = getLatestData()
 
     const attendanceData = aggregateRowsByColumn(studentData, {
         groupByColumn: 'Last Date',
         valueColumn: '% Attendance',
         mode: 'mean',
-    }).filter((row) => row['Last Date'])
+    }).flatMap((row) =>
+        row['Last Date']
+            ? [{ ...row, 'Last Date': new Date(row['Last Date'] as string) }]
+            : []
+    )
 
     const getPieSeries = (keys: string[]) => {
         const series = keys.map((key, index) => {
-            if ((latest_data[key] as number) > 0) {
+            if ((latestData[key] as number) > 0) {
                 return {
                     id: `${index}`,
-                    value: latest_data[key],
+                    value: latestData[key],
                     label: key,
                 }
             }
@@ -93,15 +94,14 @@ const StudentDashboard: React.FC = () => {
                 >
                     <Stack spacing={4} sx={{ width: '20%' }}>
                         <StudentSelector
+                            data={data}
                             onSelect={(id) => setStudentId(id)}
                             sx={{ padding: 3 }}
                         />
-                        <StudentSummary data={latest_data} />
+                        <StudentSummary data={latestData} />
                     </Stack>
                     <LineChartComponent
-                        x_values={
-                            _.map(attendanceData, 'Last Date') as string[]
-                        }
+                        x_values={_.map(attendanceData, 'Last Date') as Date[]}
                         x_label={'Date'}
                         y_values={attendanceData.map(
                             (row) => (row['% Attendance'] as number) * 100 || 0
@@ -111,11 +111,11 @@ const StudentDashboard: React.FC = () => {
                     />
                     <Stack sx={{ flex: 1 }} spacing={4}>
                         <GaugeChartComponent
-                            value={latest_data['Submitted'] || 0}
-                            valueMax={latest_data['Assessments']}
+                            value={latestData['Submitted'] || 0}
+                            valueMax={latestData['Assessments']}
                             title="Assessments Submitted"
                             placeholder={
-                                latest_data['Assessments']
+                                latestData['Assessments']
                                     ? undefined
                                     : 'No assessments yet'
                             }
@@ -128,7 +128,7 @@ const StudentDashboard: React.FC = () => {
                             ])}
                             title="Submission Breakdown"
                             placeholder={
-                                latest_data['Assessments']
+                                latestData['Assessments']
                                     ? undefined
                                     : 'No assessments yet'
                             }
@@ -136,11 +136,11 @@ const StudentDashboard: React.FC = () => {
                     </Stack>
                     <Stack sx={{ flex: 1 }} spacing={4}>
                         <GaugeChartComponent
-                            value={latest_data['Attended (AA)'] || 0}
-                            valueMax={latest_data['Academic Advising Sessions']}
+                            value={latestData['Attended (AA)'] || 0}
+                            valueMax={latestData['Academic Advising Sessions']}
                             title="Academic Advising Sessions"
                             placeholder={
-                                latest_data['Academic Advising Sessions']
+                                latestData['Academic Advising Sessions']
                                     ? undefined
                                     : 'No academic advising sessions yet'
                             }
@@ -152,9 +152,9 @@ const StudentDashboard: React.FC = () => {
                                 'Non Attendance (AA)',
                                 'Attendance Not Required (AA)',
                             ])}
-                            title="Sessions Breakdown  "
+                            title="Sessions Breakdown"
                             placeholder={
-                                latest_data['Academic Advising Sessions']
+                                latestData['Academic Advising Sessions']
                                     ? undefined
                                     : 'No academic advising sessions yet'
                             }
