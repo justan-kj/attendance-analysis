@@ -36,7 +36,7 @@ const LineChartComponent: React.FC<LineChartProps> = ({
     const scaleType = isDateData ? 'time' : 'point'
     return (
         <Paper sx={sx}>
-            <Typography sx={{ padding: 2 }} variant="h6">
+            <Typography marginBottom={2} variant="h6">
                 {y_label} by {x_label}
             </Typography>
             <LineChart
@@ -54,6 +54,7 @@ const LineChartComponent: React.FC<LineChartProps> = ({
                 ]}
                 yAxis={[{ label: y_label, min: 0, max: 100 }]}
                 grid={{ horizontal: true }}
+                margin={{ bottom: 60 }}
             />
         </Paper>
     )

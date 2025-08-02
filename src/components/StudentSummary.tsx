@@ -6,6 +6,16 @@ import {
     findPercentRankByColumn,
 } from '../utils/DataProcessing'
 
+const getColor = (attendanceRate: number) => {
+    if (attendanceRate > 70) {
+        return 'success.main'
+    } else if (attendanceRate > 50) {
+        return 'warning.main'
+    } else {
+        return 'error.main'
+    }
+}
+
 const StudentSummary: React.FC<{
     studentData: DataRow
     allData: DataRow[]
@@ -29,68 +39,83 @@ const StudentSummary: React.FC<{
     })
     const attendanceRate = studentData['% Attendance'] || 0
     const sameYearRank =
-        (1 -
-            findPercentRankByColumn(
-                attendanceYearData,
-                '% Attendance',
-                studentData['% Attendance'] || 0
-            )) *
-        100
+        findPercentRankByColumn(
+            attendanceYearData,
+            '% Attendance',
+            studentData['% Attendance'] || 0
+        ) * 100
     const sameCourseRank =
-        (1 -
-            findPercentRankByColumn(
-                attendanceCourseData,
-                '% Attendance',
-                studentData['% Attendance'] || 0
-            )) *
-        100
+        findPercentRankByColumn(
+            attendanceCourseData,
+            '% Attendance',
+            studentData['% Attendance'] || 0
+        ) * 100
     return (
         <>
-            <Stack spacing={2}>
+            <Stack spacing={2} flex={1}>
                 <Paper
                     sx={{
                         padding: 3,
                     }}
                 >
-                    <Stack spacing={2}>
+                    <Stack spacing={2} height={'100%'}>
                         <Typography variant="h6">
                             Latest Attendance Rate
                         </Typography>
                         <Stack
                             direction="row"
                             alignItems="center"
-                            spacing={5}
-                            sx={{ paddingLeft: 2 }}
+                            spacing={4}
+                            justifyContent={'space-between'}
+                            sx={{ paddingRight: 2 }}
                         >
                             {' '}
                             <Typography
                                 variant="h3"
                                 fontWeight="bold"
-                                sx={{
-                                    color:
-                                        attendanceRate > 70
-                                            ? 'success.main'
-                                            : attendanceRate > 50
-                                            ? 'warning.main'
-                                            : 'error.main',
-                                    display: 'flex',
-                                }}
+                                color={getColor(attendanceRate)}
+                                flex={1}
+                                textAlign={'center'}
                             >
                                 {attendanceRate.toFixed(0)}%
                             </Typography>{' '}
-                            <Stack>
-                                <Typography
-                                    variant="subtitle1"
-                                    fontWeight="bold"
+                            <Stack spacing={0.5}>
+                                <Stack
+                                    direction="row"
+                                    alignItems="center"
+                                    spacing={1}
                                 >
-                                    Lower than or equal to{' '}
-                                </Typography>
-                                <Typography variant="body1">
-                                    {sameYearRank.toFixed(0)}% of cohort
-                                </Typography>
-                                <Typography variant="body1">
-                                    {sameCourseRank.toFixed(0)}% of coursemates
-                                </Typography>
+                                    <Typography variant="body1">
+                                        Bottom{' '}
+                                    </Typography>
+                                    <Typography
+                                        variant="h6"
+                                        color={getColor(sameYearRank)}
+                                    >
+                                        {sameYearRank.toFixed(0)}%
+                                    </Typography>
+                                    <Typography variant="body1">
+                                        of cohort
+                                    </Typography>
+                                </Stack>
+                                <Stack
+                                    direction="row"
+                                    alignItems="center"
+                                    spacing={1}
+                                >
+                                    <Typography variant="body1">
+                                        Bottom
+                                    </Typography>
+                                    <Typography
+                                        variant="h6"
+                                        color={getColor(sameCourseRank)}
+                                    >
+                                        {sameCourseRank.toFixed(0)}%
+                                    </Typography>
+                                    <Typography variant="body1">
+                                        of course
+                                    </Typography>
+                                </Stack>
                             </Stack>
                         </Stack>
                     </Stack>
@@ -99,9 +124,11 @@ const StudentSummary: React.FC<{
                 <Paper
                     sx={{
                         padding: 3,
+                        flex: 1,
                     }}
+                    id="overview"
                 >
-                    <Stack spacing={2}>
+                    <Stack spacing={2} height={'100%'}>
                         <Typography variant="h6" fontWeight="bold">
                             Student Overview
                         </Typography>

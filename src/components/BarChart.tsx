@@ -21,10 +21,11 @@ const BarChartComponent: React.FC<BarChartProps> = ({
 }) => {
     return (
         <Paper sx={sx}>
-            <Typography variant="h6" sx={{ padding: 3 }}>
+            <Typography variant="h6" marginBottom={2}>
                 {y_label} by {x_label}
             </Typography>
             <BarChart
+                sx={{ height: '100%' }}
                 xAxis={[
                     {
                         label: x_label,
@@ -38,6 +39,7 @@ const BarChartComponent: React.FC<BarChartProps> = ({
                 ]}
                 yAxis={[{ label: y_label }]}
                 layout={layout}
+                margin={{ bottom: 60 }}
             />
         </Paper>
     )

@@ -93,11 +93,13 @@ const StudentDashboard: React.FC = () => {
                 <Stack
                     sx={{
                         p: 3,
+                        height: '90vh',
                     }}
-                    spacing={4}
+                    spacing={2}
                     direction={'row'}
+                    alignItems={'stretch'}
                 >
-                    <Stack spacing={4} sx={{ width: '20%' }}>
+                    <Stack id="student-info" spacing={2} flex={3}>
                         <StudentSelector
                             data={data}
                             onSelect={(id) => setStudentId(id)}
@@ -115,52 +117,40 @@ const StudentDashboard: React.FC = () => {
                             (row) => (row['% Attendance'] as number) || 0
                         )}
                         y_label={'% Attendance'}
-                        sx={{ flex: 2, padding: 3 }}
+                        sx={{ flex: 7, padding: 3 }}
                     />
-                    <Stack sx={{ flex: 1 }} spacing={4}>
-                        <GaugeChartComponent
-                            value={latestData['Submitted'] || 0}
-                            valueMax={latestData['Assessments']}
-                            title="Assessments Submitted"
-                            placeholder={
-                                latestData['Assessments']
-                                    ? undefined
-                                    : 'No assessments yet'
-                            }
-                        />
+                    <Stack sx={{ flex: 3 }} spacing={2}>
                         <PieChartComponent
+                            sx={{
+                                flex: 1,
+                                minHeight: 0,
+                                padding: 3,
+                            }}
                             series_data={getPieSeries([
                                 'Submitted',
                                 'Explained Non-Submission',
                                 'Non Submission',
                             ])}
-                            title="Submission Breakdown"
+                            title="Assessment Submission Status"
                             placeholder={
                                 latestData['Assessments']
                                     ? undefined
                                     : 'No assessments yet'
                             }
                         />
-                    </Stack>
-                    <Stack sx={{ flex: 1 }} spacing={4}>
-                        <GaugeChartComponent
-                            value={latestData['Attended (AA)'] || 0}
-                            valueMax={latestData['Academic Advising Sessions']}
-                            title="Academic Advising Sessions"
-                            placeholder={
-                                latestData['Academic Advising Sessions']
-                                    ? undefined
-                                    : 'No academic advising sessions yet'
-                            }
-                        />
                         <PieChartComponent
+                            sx={{
+                                flex: 1,
+                                minHeight: 0,
+                                padding: 3,
+                            }}
                             series_data={getPieSeries([
                                 'Attended (AA)',
                                 'Explained Non Attendance (AA)',
                                 'Non Attendance (AA)',
                                 'Attendance Not Required (AA)',
                             ])}
-                            title="Sessions Breakdown"
+                            title="Academic Advising Sessions"
                             placeholder={
                                 latestData['Academic Advising Sessions']
                                     ? undefined

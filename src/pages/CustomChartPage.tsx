@@ -56,6 +56,7 @@ const CustomChartPage: React.FC = () => {
                         sx={{
                             flex: 3,
                         }}
+                        padding={2}
                         spacing={2}
                     >
                         <Tabs
@@ -71,6 +72,7 @@ const CustomChartPage: React.FC = () => {
                                 x_label={aggregation.groupByColumn}
                                 y_values={y_values}
                                 y_label={aggregation.valueColumn}
+                                sx={{ padding: 3, height: '75vh' }}
                             />
                         )}
                         {chartType == 'line' && (
@@ -79,6 +81,7 @@ const CustomChartPage: React.FC = () => {
                                 x_label={aggregation.groupByColumn}
                                 y_values={y_values}
                                 y_label={aggregation.valueColumn}
+                                sx={{ padding: 3, height: '75vh' }}
                             />
                         )}
                     </Stack>
