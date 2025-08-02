@@ -66,8 +66,6 @@ const StudentSelector: React.FC<StudentSelectorProps> = ({
         mode: 'latest',
     })
 
-    console.log('latestAttendanceData', latestAttendanceData)
-
     const low_attendance_students = Array.from(
         new Set(
             _.filter(
