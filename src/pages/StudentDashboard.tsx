@@ -112,7 +112,7 @@ const StudentDashboard: React.FC = () => {
                         x_values={_.map(attendanceData, 'Last Date') as Date[]}
                         x_label={'Date'}
                         y_values={attendanceData.map(
-                            (row) => (row['% Attendance'] as number) * 100 || 0
+                            (row) => (row['% Attendance'] as number) || 0
                         )}
                         y_label={'% Attendance'}
                         sx={{ flex: 2, padding: 3 }}

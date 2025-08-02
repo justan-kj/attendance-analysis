@@ -27,7 +27,7 @@ const StudentSummary: React.FC<{
         valueColumn: '% Attendance',
         mode: 'latest',
     })
-    const attendanceRate = (studentData['% Attendance'] || 0) * 100
+    const attendanceRate = studentData['% Attendance'] || 0
     const sameYearRank =
         (1 -
             findPercentRankByColumn(

@@ -70,7 +70,7 @@ const StudentSelector: React.FC<StudentSelectorProps> = ({
         new Set(
             _.filter(
                 latestAttendanceData,
-                (row) => (row['% Attendance'] || 0) <= attendanceThreshold / 100
+                (row) => (row['% Attendance'] || 0) <= attendanceThreshold
             ).map((row) => row['User'])
         )
     )

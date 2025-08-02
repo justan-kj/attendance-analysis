@@ -54,11 +54,8 @@ export const parseExcelWorksheet = (
     const formattedRows = json.map((row) => {
         const newRow = { ...row }
         Object.keys(row).forEach((key) => {
-            if (
-                key.toLowerCase().startsWith('%') &&
-                typeof row[key] === 'number'
-            ) {
-                newRow[key] = row[key] * 100
+            if (key.toLowerCase().startsWith('%') && row[key]) {
+                newRow[key] = (row[key] as number) * 100
             }
         })
         newRow['Last Date'] = _.max([
