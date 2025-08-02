@@ -113,20 +113,32 @@ export const aggregateRowsByColumn = (
 
         switch (agg.mode) {
             case 'sum':
-                aggregatedValue = _.sumBy(groupRows, agg.valueColumn)
+                aggregatedValue = _.sumBy(groupRows, (row) =>
+                    Number(row[agg.valueColumn])
+                )
+
                 break
             case 'mean':
-                aggregatedValue = _.meanBy(groupRows, agg.valueColumn)
+                aggregatedValue = _.meanBy(groupRows, (row) =>
+                    Number(row[agg.valueColumn])
+                )
+                console.log(
+                    `Aggregating ${groupKey} with mean: ${aggregatedValue}`
+                )
                 break
             case 'max': {
-                const maxRecord = _.maxBy(groupRows, agg.valueColumn)
+                const maxRecord = _.maxBy(groupRows, (row) =>
+                    Number(row[agg.valueColumn])
+                )
                 aggregatedValue = maxRecord
                     ? Number(maxRecord[agg.valueColumn])
                     : 0
                 break
             }
             case 'min': {
-                const minRecord = _.minBy(groupRows, agg.valueColumn)
+                const minRecord = _.minBy(groupRows, (row) =>
+                    Number(row[agg.valueColumn])
+                )
                 aggregatedValue = minRecord
                     ? Number(minRecord[agg.valueColumn])
                     : 0
