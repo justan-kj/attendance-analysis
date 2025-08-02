@@ -14,7 +14,7 @@ const PieChartComponent: React.FC<PieChartProps> = ({
     title,
     series_data,
     placeholder,
-    sx = { padding: 3 },
+    sx = { padding: 3, height: 200 },
 }) => {
     return (
         <Paper sx={sx}>
@@ -37,7 +37,6 @@ const PieChartComponent: React.FC<PieChartProps> = ({
                                 data: series_data,
                             },
                         ]}
-                        height={200}
                         slotProps={{
                             legend: {
                                 direction: 'horizontal',

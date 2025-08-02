@@ -15,7 +15,7 @@ const LineChartComponent: React.FC<LineChartProps> = ({
     x_values,
     y_label,
     y_values,
-    sx = { padding: 3 },
+    sx = { padding: 3, height: 600 },
 }) => {
     const isDateData = x_values.length > 0 && x_values[0] instanceof Date
     let processedXValues = x_values
@@ -53,7 +53,6 @@ const LineChartComponent: React.FC<LineChartProps> = ({
                     },
                 ]}
                 yAxis={[{ label: y_label, min: 0, max: 100 }]}
-                height={600}
                 grid={{ horizontal: true }}
             />
         </Paper>

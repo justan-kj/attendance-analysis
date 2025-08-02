@@ -15,7 +15,7 @@ const GaugeChartComponent: React.FC<GaugeChartProps> = ({
     valueMax,
     title = 'Gauge Chart',
     placeholder,
-    sx = { padding: 3 },
+    sx = { padding: 3, height: 200 },
 }) => {
     const gauge_text = valueMax ? ` ${value}  / ${valueMax}` : ''
 
@@ -40,7 +40,6 @@ const GaugeChartComponent: React.FC<GaugeChartProps> = ({
                         startAngle={-95}
                         endAngle={95}
                         text={gauge_text}
-                        height={200}
                         sx={{
                             [`& .${gaugeClasses.valueText}`]: {
                                 fontSize: 30,
