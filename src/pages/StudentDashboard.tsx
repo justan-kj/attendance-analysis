@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import LineChartComponent from '../components/LineChart'
-import GaugeChartComponent from '../components/GaugeChart'
 import PieChartComponent from '../components/PieChart'
 import { Stack } from '@mui/material'
 import StudentSelector from '../components/StudentSelector'
@@ -92,14 +91,14 @@ const StudentDashboard: React.FC = () => {
             {data ? (
                 <Stack
                     sx={{
-                        p: 3,
+                        p: 5,
                         height: '90vh',
                     }}
-                    spacing={2}
+                    spacing={4}
                     direction={'row'}
                     alignItems={'stretch'}
                 >
-                    <Stack id="student-info" spacing={2} flex={3}>
+                    <Stack id="student-info" spacing={4} flex={4}>
                         <StudentSelector
                             data={data}
                             onSelect={(id) => setStudentId(id)}
@@ -117,9 +116,9 @@ const StudentDashboard: React.FC = () => {
                             (row) => (row['% Attendance'] as number) || 0
                         )}
                         y_label={'% Attendance'}
-                        sx={{ flex: 7, padding: 3 }}
+                        sx={{ flex: 9, padding: 3 }}
                     />
-                    <Stack sx={{ flex: 3 }} spacing={2}>
+                    <Stack sx={{ flex: 4 }} spacing={4}>
                         <PieChartComponent
                             sx={{
                                 flex: 1,

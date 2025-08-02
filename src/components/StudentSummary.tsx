@@ -52,7 +52,7 @@ const StudentSummary: React.FC<{
         ) * 100
     return (
         <>
-            <Stack spacing={2} flex={1}>
+            <Stack spacing={4} flex={1}>
                 <Paper
                     sx={{
                         padding: 3,
