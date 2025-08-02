@@ -1,59 +1,46 @@
-import React, { useContext, useState, useEffect } from 'react'
-import LineChartComponent from '../components/Linechart'
-import GaugeChartComponent from '../components/GaugeChart'
+import React, { useState, useEffect } from 'react'
+import LineChartComponent from '../components/LineChart'
 import PieChartComponent from '../components/PieChart'
-import { DataContext } from '../contexts/DataContext'
-import { Paper, Stack, Typography } from '@mui/material'
+import { Stack } from '@mui/material'
 import StudentSelector from '../components/StudentSelector'
 import {
     aggregateRowsByColumn,
     filterRowsByColumn,
 } from '../utils/DataProcessing'
 import type { ColumnFilter } from '../utils/DataProcessing'
+import type { DataRow } from '../utils/ExcelParser'
 import NoDataWarning from '../components/NoDataWarning'
 import _ from 'lodash'
 import type { PieValueType } from '@mui/x-charts'
+import { useData } from '../hook/useData'
+import StudentSummary from '../components/StudentSummary'
 
 const StudentDashboard: React.FC = () => {
-    const context = useContext(DataContext)
-    if (!context) {
-        throw new Error('DataContext not provided')
-    }
-    const { data } = context
-    const [studentData, setStudentData] = useState<any[]>([])
-    const [student_id, setStudentId] = useState<string>('')
-
-    const addDataDate = (row: any) => {
-        const date =
-            row['Last Submitted'] ||
-            row['Last Attendence'] ||
-            row['Last Attended (AA)']
-        return {
-            ...row,
-            Date: date,
-        }
-    }
+    const { data } = useData()
+    const [studentData, setStudentData] = useState<DataRow[]>([])
+    const [studentId, setStudentId] = useState<string>('')
 
     useEffect(() => {
         if (!data) {
-            setStudentData([])
             return
         }
         const filter: ColumnFilter = {
             column: 'User',
             mode: 'equals',
-            value: student_id,
+            value: studentId,
         }
-        const filteredData = filterRowsByColumn(data.rows, filter)
-        const datedData = filteredData.map(addDataDate)
-        const sortedData = _.sortBy(datedData, (row) => row['Date'])
-        setStudentData(sortedData)
-    }, [data, student_id])
+        setStudentData(filterRowsByColumn(data, filter))
+    }, [data, studentId])
 
     const getLatestData = () => {
-        const lastRowData = _.last(studentData)
+        const lastRowData = studentData.sort((a, b) => {
+            return (
+                new Date(b['Last Date'] as string).getTime() -
+                new Date(a['Last Date'] as string).getTime()
+            )
+        })[0]
         if (!lastRowData) {
-            return {}
+            return {} as DataRow
         }
         return {
             ...lastRowData,
@@ -72,25 +59,26 @@ const StudentDashboard: React.FC = () => {
             'Attendance Not Recorded (AA)': _.max(
                 studentData.map((row) => row['Attendance Not Recorded (AA)'])
             ),
-        }
+        } as DataRow
     }
+    const latestData = getLatestData()
 
-    const latest_data = getLatestData()
-
-    const attendanceData = aggregateRowsByColumn(studentData || [], {
-        groupByColumn: 'Date',
+    const attendanceData = aggregateRowsByColumn(studentData, {
+        groupByColumn: 'Last Date',
         valueColumn: '% Attendance',
-        mode: 'mean',
-    }).filter((row) => row['Date'] !== 'undefined')
-
-    console.log('Attendance Data:', attendanceData)
+        mode: 'latest',
+    }).flatMap((row) =>
+        row['Last Date']
+            ? [{ ...row, 'Last Date': new Date(row['Last Date'] as string) }]
+            : []
+    )
 
     const getPieSeries = (keys: string[]) => {
         const series = keys.map((key, index) => {
-            if (latest_data[key] > 0) {
+            if ((latestData[key] as number) > 0) {
                 return {
                     id: `${index}`,
-                    value: latest_data[key],
+                    value: latestData[key],
                     label: key,
                 }
             }
@@ -98,110 +86,72 @@ const StudentDashboard: React.FC = () => {
         return series as PieValueType[]
     }
 
-    const assessmentValues = {
-        total: latest_data['Assessments'] as number,
-        submitted: latest_data['Submitted'] as number,
-        explained_non_submission: latest_data[
-            'Explained Non-Submission'
-        ] as number,
-        non_submission: latest_data['Non-Submission'] as number,
-    }
-
     return (
         <>
             {data ? (
                 <Stack
                     sx={{
-                        p: 3,
+                        p: 5,
+                        height: '90vh',
                     }}
                     spacing={4}
                     direction={'row'}
+                    alignItems={'stretch'}
                 >
-                    <Stack spacing={4} sx={{ width: '20%' }}>
+                    <Stack id="student-info" spacing={4} flex={4}>
                         <StudentSelector
+                            data={data}
                             onSelect={(id) => setStudentId(id)}
                             sx={{ padding: 3 }}
                         />
-                        <Paper>
-                            <Stack spacing={2} sx={{ padding: 3 }}>
-                                <Typography variant="h6">
-                                    Student Overview
-                                </Typography>
-                                <Typography variant="subtitle1">
-                                    Level of Study:{' '}
-                                    {latest_data['Level of Study']}
-                                </Typography>{' '}
-                                <Typography variant="subtitle1">
-                                    Course:{' '}
-                                    {latest_data['Course Title'] || 'N/A'}
-                                </Typography>
-                                <Typography variant="subtitle1">
-                                    Year of Course:{' '}
-                                    {latest_data['Year of Course']}
-                                </Typography>
-                                <Typography variant="subtitle1">
-                                    Registration Status:{' '}
-                                    {latest_data['Registration Status'] ||
-                                        'N/A'}
-                                </Typography>
-                            </Stack>
-                        </Paper>
+                        <StudentSummary
+                            studentData={latestData}
+                            allData={data}
+                        />
                     </Stack>
                     <LineChartComponent
-                        x_values={_.map(attendanceData, 'Date') as string[]}
+                        x_values={_.map(attendanceData, 'Last Date') as Date[]}
                         x_label={'Date'}
-                        y_values={
-                            _.map(attendanceData, '% Attendance') as number[]
-                        }
+                        y_values={attendanceData.map(
+                            (row) => (row['% Attendance'] as number) || 0
+                        )}
                         y_label={'% Attendance'}
-                        sx={{ flex: 2, padding: 3 }}
+                        sx={{ flex: 9, padding: 3 }}
                     />
-                    <Stack sx={{ flex: 1 }} spacing={4}>
-                        <GaugeChartComponent
-                            value={latest_data['Submitted']}
-                            valueMax={latest_data['Assessments']}
-                            title="Assessments Submitted"
-                            placeholder={
-                                latest_data['Assessments']
-                                    ? undefined
-                                    : 'No assessments yet'
-                            }
-                        />
+                    <Stack sx={{ flex: 4 }} spacing={4}>
                         <PieChartComponent
+                            sx={{
+                                flex: 1,
+                                minHeight: 0,
+                                padding: 3,
+                            }}
                             series_data={getPieSeries([
                                 'Submitted',
                                 'Explained Non-Submission',
                                 'Non Submission',
                             ])}
-                            title="Submission Breakdown"
+                            title="Assessment Submission Status"
                             placeholder={
-                                latest_data['Assessments']
+                                latestData['Assessments']
                                     ? undefined
                                     : 'No assessments yet'
                             }
                         />
-                    </Stack>
-                    <Stack sx={{ flex: 1 }} spacing={4}>
-                        <GaugeChartComponent
-                            value={latest_data['Attended (AA)']}
-                            valueMax={latest_data['Academic Advising Sessions']}
-                            title="Academic Advising Sessions"
-                            placeholder={
-                                latest_data['Academic Advising Sessions']
-                                    ? undefined
-                                    : 'No academic advising sessions yet'
-                            }
-                        />
                         <PieChartComponent
+                            sx={{
+                                flex: 1,
+                                minHeight: 0,
+                                padding: 3,
+                            }}
                             series_data={getPieSeries([
                                 'Attended (AA)',
                                 'Explained Non Attendance (AA)',
                                 'Non Attendance (AA)',
                                 'Attendance Not Required (AA)',
                             ])}
-                            title="Sessions Breakdown  "
+                            title="Academic Advising Sessions"
                             placeholder={
-                                latest_data['Academic Advising Sessions']
+                                latestData['Academic Advising Sessions']
                                     ? undefined
                                     : 'No academic advising sessions yet'
                             }

@@ -19,7 +19,7 @@ const RadarChartComponent: React.FC<RadarChartProps> = ({
 }) => {
     return (
         <Paper sx={sx}>
-            <Typography variant="h6" sx={{ padding: 3 }}>
+            <Typography variant="h6" marginBottom={2}>
                 {title}
             </Typography>
             <RadarChart
@@ -28,7 +28,6 @@ const RadarChartComponent: React.FC<RadarChartProps> = ({
                     max: max_value,
                     metrics: labels,
                 }}
-                height={600}
             />
         </Paper>
     )

@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material'
 import type { SelectChangeEvent } from '@mui/material/Select'
+import type { SxProps, Theme } from '@mui/material/styles'
 
 export interface AppSelectProps {
     onChange: (value: string) => void
     initialValue: string
     label: string
-    menuItems: string[]
-    menuLabels?: string[]
-    sx?: React.CSSProperties
+    menuItems: readonly string[]
+    menuLabels?: readonly string[]
+    sx?: SxProps<Theme>
 }
 
 const AppSelect: React.FC<AppSelectProps> = ({
@@ -21,7 +22,7 @@ const AppSelect: React.FC<AppSelectProps> = ({
 }) => {
     const [selectedValue, setSelectedValue] = useState<string>(initialValue)
 
-    const handleChange = (event: SelectChangeEvent) => {
+    const handleChange = (event: SelectChangeEvent<string>) => {
         const value = event.target.value
         setSelectedValue(value)
         onChange(value)

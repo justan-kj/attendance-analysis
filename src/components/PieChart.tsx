@@ -18,8 +18,17 @@ const PieChartComponent: React.FC<PieChartProps> = ({
 }) => {
     return (
         <Paper sx={sx}>
-            <Typography variant="h6">{title}</Typography>
-            <Container sx={{ marginTop: 2 }}>
+            <Typography variant="h6" marginBottom={2}>
+                {title}
+            </Typography>{' '}
+            <Container
+                sx={{
+                    height: '80%',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    alignContent: 'center',
+                }}
+            >
                 {placeholder ? (
                     <Typography
                         variant="subtitle1"
@@ -37,18 +46,18 @@ const PieChartComponent: React.FC<PieChartProps> = ({
                                 data: series_data,
                             },
                         ]}
-                        height={200}
                         slotProps={{
                             legend: {
-                                direction: 'horizontal',
+                                direction: 'vertical',
                                 position: {
-                                    vertical: 'bottom',
+                                    vertical: 'middle',
                                     horizontal: 'center',
                                 },
                             },
                         }}
+                        height={220}
                     />
-                )}
+                )}{' '}
             </Container>
         </Paper>
     )

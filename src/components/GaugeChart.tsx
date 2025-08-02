@@ -40,7 +40,6 @@ const GaugeChartComponent: React.FC<GaugeChartProps> = ({
                         startAngle={-95}
                         endAngle={95}
                         text={gauge_text}
-                        height={200}
                         sx={{
                             [`& .${gaugeClasses.valueText}`]: {
                                 fontSize: 30,

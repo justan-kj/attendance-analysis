@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import type { DataRow } from './ExcelParser'
 
 export type FilterMode =
     | 'equals'
@@ -27,7 +28,7 @@ export type ColumnFilter = {
     value: number | string
 }
 
-export type AggregationMode = 'sum' | 'mean' | 'max' | 'min'
+export type AggregationMode = 'sum' | 'mean' | 'max' | 'min' | 'latest'
 
 export type ColumnAggregation = {
     groupByColumn: string
@@ -36,9 +37,9 @@ export type ColumnAggregation = {
 }
 
 export const filterRowsByColumn = (
-    rows: Record<string, unknown>[],
+    rows: DataRow[],
     dataFilter: ColumnFilter
-): Record<string, unknown>[] => {
+): DataRow[] => {
     switch (dataFilter.mode) {
         case 'equals':
             return rows.filter((row) => {
@@ -89,11 +90,11 @@ export const filterRowsByColumn = (
 }
 
 export const aggregateRowsByColumn = (
-    rows: Record<string, unknown>[],
+    rows: DataRow[],
     agg: ColumnAggregation
-): Record<string, unknown>[] => {
+): DataRow[] => {
     const groups = _.groupBy(rows, agg.groupByColumn)
-    const aggregatedRows: Record<string, unknown>[] = []
+    const aggregatedRows: DataRow[] = []
 
     for (const groupKey in groups) {
         const groupRows = groups[groupKey]
@@ -112,24 +113,49 @@ export const aggregateRowsByColumn = (
 
         switch (agg.mode) {
             case 'sum':
-                aggregatedValue = _.sumBy(groupRows, agg.valueColumn)
+                aggregatedValue = _.sumBy(groupRows, (row) =>
+                    Number(row[agg.valueColumn])
+                )
+
                 break
             case 'mean':
-                aggregatedValue = _.meanBy(groupRows, agg.valueColumn)
+                aggregatedValue = _.meanBy(groupRows, (row) =>
+                    Number(row[agg.valueColumn])
+                )
+                console.log(
+                    `Aggregating ${groupKey} with mean: ${aggregatedValue}`
+                )
                 break
             case 'max': {
-                const maxRecord = _.maxBy(groupRows, agg.valueColumn)
+                const maxRecord = _.maxBy(groupRows, (row) =>
+                    Number(row[agg.valueColumn])
+                )
                 aggregatedValue = maxRecord
                     ? Number(maxRecord[agg.valueColumn])
                     : 0
                 break
             }
             case 'min': {
-                const minRecord = _.minBy(groupRows, agg.valueColumn)
+                const minRecord = _.minBy(groupRows, (row) =>
+                    Number(row[agg.valueColumn])
+                )
                 aggregatedValue = minRecord
                     ? Number(minRecord[agg.valueColumn])
                     : 0
 
+                break
+            }
+            case 'latest': {
+                const latestRecord = groupRows.sort((a, b) => {
+                    return (
+                        new Date(b['Last Date'] as string).getTime() -
+                        new Date(a['Last Date'] as string).getTime()
+                    )
+                })[0]
+
+                aggregatedValue = latestRecord
+                    ? Number(latestRecord[agg.valueColumn as keyof DataRow])
+                    : 0
                 break
             }
             default:
@@ -139,7 +165,26 @@ export const aggregateRowsByColumn = (
         aggregatedRows.push({
             [agg.groupByColumn]: groupKey,
             [agg.valueColumn]: aggregatedValue,
-        })
+        } as DataRow)
     }
     return aggregatedRows
+}
+
+export const findPercentRankByColumn = (
+    rows: DataRow[],
+    column: keyof DataRow,
+    value: number
+): number => {
+    const sortedRows = _.sortBy(rows, (row) => row[column] || 0)
+    if (sortedRows.length === 0) {
+        return 0
+    }
+    const targetRows = sortedRows.filter(
+        (row) => ((row[column] || 0) as number) < value
+    )
+    if (targetRows.length === 0) {
+        return 0
+    }
+
+    return targetRows.length / sortedRows.length
 }

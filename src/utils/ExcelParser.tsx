@@ -1,6 +1,6 @@
 import { utils } from 'xlsx'
 import type { WorkSheet } from 'xlsx'
-
+import _ from 'lodash'
 export interface ExcelTable {
     workbookName: string
     worksheetName: string
@@ -8,8 +8,26 @@ export interface ExcelTable {
     rows: Record<string, unknown>[]
 }
 
-const ExcelDateToJSDate = (date: number) => {
-    return new Date(Math.round((date - 25569) * 86400 * 1000))
+export interface DataRow {
+    User: string
+    'Last Submitted': Date | undefined
+    'Last Attendence': Date | undefined
+    'Last Attended (AA)': Date | undefined
+    '% Attendance': number | undefined
+    'Level of Study': string | undefined
+    'Course Title': string | undefined
+    'Year of Course': number | undefined
+    'Registration Status': string | undefined
+    'Academic Advising Sessions': number | undefined
+    'Attended (AA)': number | undefined
+    'Explained Non Attendances (AA)': number | undefined
+    'Non Attendances (AA)': number | undefined
+    'Attendance Not Recorded (AA)': number | undefined
+    Assessments: number | undefined
+    Submitted: number | undefined
+    'Explained Non-Submission': number | undefined
+    'Non-Submission': number | undefined
+    [key: string]: string | number | Date | undefined
 }
 
 export const parseExcelWorksheet = (
@@ -17,7 +35,12 @@ export const parseExcelWorksheet = (
     worksheetName: string,
     worksheet: WorkSheet
 ): ExcelTable => {
-    const json = utils.sheet_to_json<Record<string, unknown>>(worksheet)
+    const json = utils.sheet_to_json<Record<string, unknown>>(worksheet, {
+        raw: false,
+        dateNF: 'yyyy-mm-dd',
+        defval: null,
+        blankrows: false,
+    })
     if (json.length === 0) {
         return {
             workbookName,
@@ -28,32 +51,26 @@ export const parseExcelWorksheet = (
     }
 
     const headers = Array.from(new Set(json.flatMap((row) => Object.keys(row))))
-
     const formattedRows = json.map((row) => {
         const newRow = { ...row }
-
         Object.keys(row).forEach((key) => {
-            if (
-                key.toLowerCase().startsWith('last') &&
-                typeof row[key] === 'number'
-            ) {
-                newRow[key] = ExcelDateToJSDate(row[key] as number)
-            }
-            if (
-                key.toLowerCase().startsWith('%') &&
-                typeof row[key] === 'number'
-            ) {
-                newRow[key] = row[key] * 100
+            if (key.toLowerCase().startsWith('%') && row[key]) {
+                newRow[key] = (row[key] as number) * 100
             }
         })
-
+        newRow['Last Date'] = _.max([
+            row['Last Submitted'],
+            row['Last Attendence'],
+            row['Last Attended (AA)'],
+        ]) as Date | undefined
         return newRow
     })
+    const dataRows = _.sortBy(formattedRows, (row) => row['Last Date'])
 
     return {
         workbookName,
         worksheetName,
         headers,
-        rows: formattedRows,
+        rows: dataRows,
     }
 }
