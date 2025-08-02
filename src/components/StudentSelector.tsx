@@ -3,7 +3,6 @@ import {
     Typography,
     Stack,
     Checkbox,
-    Button,
     IconButton,
     FormControlLabel,
 } from '@mui/material'
@@ -17,9 +16,11 @@ import DialogTitle from '@mui/material/DialogTitle'
 import Dialog from '@mui/material/Dialog'
 import SettingsIcon from '@mui/icons-material/Settings'
 import CloseIcon from '@mui/icons-material/Close'
+import { aggregateRowsByColumn } from '../utils/DataProcessing'
 
 interface StudentSelectorProps {
     data: DataRow[]
+    studentData: DataRow
     onSelect?: (studentId: string) => void
     sx?: React.CSSProperties
 }
@@ -33,6 +34,7 @@ interface SettingsDialogProps {
 
 const StudentSelector: React.FC<StudentSelectorProps> = ({
     data,
+    studentData,
     onSelect,
     sx = { padding: 3 },
 }) => {
@@ -41,38 +43,38 @@ const StudentSelector: React.FC<StudentSelectorProps> = ({
     const [isShowingWithdrawn, setIsShowingWithdrawn] = useState<boolean>(false)
     const [openSettings, setOpenSettings] = useState<boolean>(false)
 
-    const all_students = Array.from(
-        new Set(
-            _.filter(
-                data,
-                (row) =>
-                    isShowingWithdrawn ||
-                    row['Registration Status'] === 'SUCCESSFUL' ||
-                    row['Registration Status'] === 'REGISTERED'
-            ).map((row) => row['User'])
-        )
+    const validStudents = data.filter(
+        (row) =>
+            isShowingWithdrawn ||
+            row['Registration Status'] === 'SUCCESSFUL' ||
+            row['Registration Status'] === 'REGISTERED'
     )
+
+    const all_students = Array.from(
+        new Set(validStudents.map((row) => row['User']))
+    ).sort()
+
     const aa_students = Array.from(
         new Set(
-            _.filter(
-                data,
-                (row) =>
-                    (row['Academic Advising Sessions'] || 0) > 0 &&
-                    (isShowingWithdrawn ||
-                        row['Registration Status'] === 'SUCCESSFUL' ||
-                        row['Registration Status'] === 'REGISTERED')
-            ).map((row) => row['User'])
+            validStudents
+                .filter((row) => (row['Academic Advising Sessions'] || 0) > 0)
+                .map((row) => row['User'])
         )
     )
+
+    const latestAttendanceData = aggregateRowsByColumn(validStudents, {
+        groupByColumn: 'User',
+        valueColumn: '% Attendance',
+        mode: 'latest',
+    })
+
+    console.log('latestAttendanceData', latestAttendanceData)
+
     const low_attendance_students = Array.from(
         new Set(
             _.filter(
-                data,
-                (row) =>
-                    (row['% Attendance'] || 0) <= attendanceThreshold / 100 &&
-                    (isShowingWithdrawn ||
-                        row['Registration Status'] === 'SUCCESSFUL' ||
-                        row['Registration Status'] === 'REGISTERED')
+                latestAttendanceData,
+                (row) => (row['% Attendance'] || 0) <= attendanceThreshold / 100
             ).map((row) => row['User'])
         )
     )

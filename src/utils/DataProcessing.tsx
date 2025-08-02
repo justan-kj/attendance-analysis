@@ -28,7 +28,7 @@ export type ColumnFilter = {
     value: number | string
 }
 
-export type AggregationMode = 'sum' | 'mean' | 'max' | 'min'
+export type AggregationMode = 'sum' | 'mean' | 'max' | 'min' | 'latest'
 
 export type ColumnAggregation = {
     groupByColumn: string
@@ -133,6 +133,19 @@ export const aggregateRowsByColumn = (
 
                 break
             }
+            case 'latest': {
+                const latestRecord = groupRows.sort((a, b) => {
+                    return (
+                        new Date(b['Last Date'] as string).getTime() -
+                        new Date(a['Last Date'] as string).getTime()
+                    )
+                })[0]
+
+                aggregatedValue = latestRecord
+                    ? Number(latestRecord[agg.valueColumn as keyof DataRow])
+                    : 0
+                break
+            }
             default:
                 throw new Error(`Unknown aggregation mode: ${agg.mode}`)
         }
@@ -143,4 +156,23 @@ export const aggregateRowsByColumn = (
         } as DataRow)
     }
     return aggregatedRows
+}
+
+export const findPercentRankByColumn = (
+    rows: DataRow[],
+    column: keyof DataRow,
+    value: number
+): number => {
+    const sortedRows = _.sortBy(rows, (row) => row[column] || 0)
+    if (sortedRows.length === 0) {
+        return 0
+    }
+    const targetRows = sortedRows.filter(
+        (row) => ((row[column] || 0) as number) < value
+    )
+    if (targetRows.length === 0) {
+        return 0
+    }
+
+    return targetRows.length / sortedRows.length
 }

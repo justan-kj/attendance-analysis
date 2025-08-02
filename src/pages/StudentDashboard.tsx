@@ -34,7 +34,12 @@ const StudentDashboard: React.FC = () => {
     }, [data, studentId])
 
     const getLatestData = () => {
-        const lastRowData = _.last(studentData)
+        const lastRowData = studentData.sort((a, b) => {
+            return (
+                (new Date(b['Last Date'] as string) as any) -
+                (new Date(a['Last Date'] as string) as any)
+            )
+        })[0]
         if (!lastRowData) {
             return {} as DataRow
         }
@@ -62,7 +67,7 @@ const StudentDashboard: React.FC = () => {
     const attendanceData = aggregateRowsByColumn(studentData, {
         groupByColumn: 'Last Date',
         valueColumn: '% Attendance',
-        mode: 'mean',
+        mode: 'latest',
     }).flatMap((row) =>
         row['Last Date']
             ? [{ ...row, 'Last Date': new Date(row['Last Date'] as string) }]
@@ -98,7 +103,10 @@ const StudentDashboard: React.FC = () => {
                             onSelect={(id) => setStudentId(id)}
                             sx={{ padding: 3 }}
                         />
-                        <StudentSummary data={latestData} />
+                        <StudentSummary
+                            studentData={latestData}
+                            allData={data}
+                        />
                     </Stack>
                     <LineChartComponent
                         x_values={_.map(attendanceData, 'Last Date') as Date[]}
