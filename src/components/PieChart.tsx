@@ -14,7 +14,7 @@ const PieChartComponent: React.FC<PieChartProps> = ({
     title,
     series_data,
     placeholder,
-    sx = { padding: 3, height: 200 },
+    sx = { padding: 3 },
 }) => {
     return (
         <Paper sx={sx}>

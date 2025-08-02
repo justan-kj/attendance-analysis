@@ -15,7 +15,7 @@ const GaugeChartComponent: React.FC<GaugeChartProps> = ({
     valueMax,
     title = 'Gauge Chart',
     placeholder,
-    sx = { padding: 3, height: 200 },
+    sx = { padding: 3 },
 }) => {
     const gauge_text = valueMax ? ` ${value}  / ${valueMax}` : ''
 

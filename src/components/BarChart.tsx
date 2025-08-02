@@ -17,7 +17,7 @@ const BarChartComponent: React.FC<BarChartProps> = ({
     y_label,
     y_values,
     layout = 'vertical',
-    sx = { padding: 3, height: 600 },
+    sx = { padding: 3 },
 }) => {
     return (
         <Paper sx={sx}>

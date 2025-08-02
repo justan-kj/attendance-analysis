@@ -19,7 +19,7 @@ const ScatterChartComponent: React.FC<ScatterChartProps> = ({
             <Typography sx={{ padding: 2 }} variant="h6">
                 {title}
             </Typography>
-            <ScatterChart series={series} height={600} />
+            <ScatterChart series={series} />
         </Paper>
     )
 }

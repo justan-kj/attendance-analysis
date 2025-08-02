@@ -28,7 +28,6 @@ const RadarChartComponent: React.FC<RadarChartProps> = ({
                     max: max_value,
                     metrics: labels,
                 }}
-                height={600}
             />
         </Paper>
     )

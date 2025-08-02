@@ -15,7 +15,7 @@ const LineChartComponent: React.FC<LineChartProps> = ({
     x_values,
     y_label,
     y_values,
-    sx = { padding: 3, height: 600 },
+    sx = { padding: 3 },
 }) => {
     const isDateData = x_values.length > 0 && x_values[0] instanceof Date
     let processedXValues = x_values
