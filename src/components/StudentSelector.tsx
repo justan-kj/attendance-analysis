@@ -20,7 +20,6 @@ import { aggregateRowsByColumn } from '../utils/DataProcessing'
 
 interface StudentSelectorProps {
     data: DataRow[]
-    studentData: DataRow
     onSelect?: (studentId: string) => void
     sx?: React.CSSProperties
 }
@@ -34,7 +33,6 @@ interface SettingsDialogProps {
 
 const StudentSelector: React.FC<StudentSelectorProps> = ({
     data,
-    studentData,
     onSelect,
     sx = { padding: 3 },
 }) => {

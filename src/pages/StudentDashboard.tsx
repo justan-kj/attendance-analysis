@@ -36,8 +36,8 @@ const StudentDashboard: React.FC = () => {
     const getLatestData = () => {
         const lastRowData = studentData.sort((a, b) => {
             return (
-                (new Date(b['Last Date'] as string) as any) -
-                (new Date(a['Last Date'] as string) as any)
+                new Date(b['Last Date'] as string).getTime() -
+                new Date(a['Last Date'] as string).getTime()
             )
         })[0]
         if (!lastRowData) {
