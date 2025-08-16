@@ -4,9 +4,9 @@ import { BrowserRouter, Routes, Route } from 'react-router'
 import { DataProvider } from './contexts/DataProvider'
 import UploadPage from './pages/UploadPage'
 import AppLayout from './components/AppLayout'
-import HomePage from './pages/HomePage'
 import StudentDashboard from './pages/StudentDashboard'
 import CustomChartPage from './pages/CustomChartPage'
+import HomeDashboard from './pages/HomeDashboard'
 
 function App() {
     return (
@@ -17,7 +17,7 @@ function App() {
                     <BrowserRouter>
                         <AppLayout />
                         <Routes>
-                            <Route path="/" element={<HomePage />} />
+                            <Route path="/" element={<HomeDashboard />} />
                             <Route path="/table" element={<DataTablePage />} />
                             <Route path="/upload" element={<UploadPage />} />
                             <Route
