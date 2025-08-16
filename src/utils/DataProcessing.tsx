@@ -30,12 +30,6 @@ export type ColumnFilter = {
 
 export type AggregationMode = 'sum' | 'mean' | 'max' | 'min' | 'latest'
 
-export type ColumnAggregation = {
-    groupByColumn: string
-    valueColumn: string
-    mode: AggregationMode
-}
-
 export const filterRowsByColumn = (
     rows: DataRow[],
     dataFilter: ColumnFilter
@@ -91,81 +85,106 @@ export const filterRowsByColumn = (
 
 export const aggregateRowsByColumn = (
     rows: DataRow[],
-    agg: ColumnAggregation
+    groupByColumns: string[],
+    valueColumns: string[],
+    aggregationModes: AggregationMode[]
 ): DataRow[] => {
-    const groups = _.groupBy(rows, agg.groupByColumn)
+    if (
+        !rows ||
+        !groupByColumns ||
+        !valueColumns ||
+        !aggregationModes ||
+        rows.length === 0 ||
+        groupByColumns.length === 0 ||
+        valueColumns.length === 0 ||
+        aggregationModes.length === 0
+    ) {
+        return []
+    }
+    const groups = _.groupBy(rows, (row) =>
+        groupByColumns.map((col) => String(row[col])).join('|')
+    )
     const aggregatedRows: DataRow[] = []
+
+    for (const column of [...groupByColumns, ...valueColumns]) {
+        if (!Object.keys(rows[0]).includes(column)) {
+            throw new Error(`Column '${column}' does not exist in rows`)
+        }
+    }
+    if (valueColumns.length !== aggregationModes.length) {
+        throw new Error(
+            'No. of value columns must match no. of aggregation modes'
+        )
+    }
 
     for (const groupKey in groups) {
         const groupRows = groups[groupKey]
-        const hasNonNumbers = groupRows.some((row) => {
-            const value = row[agg.valueColumn]
-            return value === null || value === undefined || isNaN(Number(value))
+        const newRow: DataRow = {} as DataRow
+        groupByColumns.forEach((column) => {
+            newRow[column] = groupRows[0][column]
         })
 
-        if (hasNonNumbers) {
-            throw new Error(
-                `Column '${agg.valueColumn}' contains non-numeric values. All values must be numbers for aggregation.`
-            )
-        }
+        for (let i = 0; i < valueColumns.length; i++) {
+            let aggregatedValue: number | string | Date
 
-        let aggregatedValue: number
-
-        switch (agg.mode) {
-            case 'sum':
-                aggregatedValue = _.sumBy(groupRows, (row) =>
-                    Number(row[agg.valueColumn])
-                )
-
-                break
-            case 'mean':
-                aggregatedValue = _.meanBy(groupRows, (row) =>
-                    Number(row[agg.valueColumn])
-                )
-                console.log(
-                    `Aggregating ${groupKey} with mean: ${aggregatedValue}`
-                )
-                break
-            case 'max': {
-                const maxRecord = _.maxBy(groupRows, (row) =>
-                    Number(row[agg.valueColumn])
-                )
-                aggregatedValue = maxRecord
-                    ? Number(maxRecord[agg.valueColumn])
-                    : 0
-                break
-            }
-            case 'min': {
-                const minRecord = _.minBy(groupRows, (row) =>
-                    Number(row[agg.valueColumn])
-                )
-                aggregatedValue = minRecord
-                    ? Number(minRecord[agg.valueColumn])
-                    : 0
-
-                break
-            }
-            case 'latest': {
-                const latestRecord = groupRows.sort((a, b) => {
-                    return (
-                        new Date(b['Last Date'] as string).getTime() -
-                        new Date(a['Last Date'] as string).getTime()
+            switch (aggregationModes[i]) {
+                case 'sum':
+                    aggregatedValue = _.sumBy(groupRows, (row) =>
+                        Number(row[valueColumns[i]])
                     )
-                })[0]
 
-                aggregatedValue = latestRecord
-                    ? Number(latestRecord[agg.valueColumn as keyof DataRow])
-                    : 0
-                break
+                    break
+                case 'mean':
+                    aggregatedValue = _.meanBy(groupRows, (row) =>
+                        Number(row[valueColumns[i]])
+                    )
+                    break
+                case 'max': {
+                    const maxRecord = _.maxBy(groupRows, (row) =>
+                        Number(row[valueColumns[i]])
+                    )
+                    aggregatedValue = maxRecord
+                        ? Number(maxRecord[valueColumns[i]])
+                        : 0
+                    break
+                }
+                case 'min': {
+                    const minRecord = _.minBy(groupRows, (row) =>
+                        Number(row[valueColumns[i]])
+                    )
+                    aggregatedValue = minRecord
+                        ? Number(minRecord[valueColumns[i]])
+                        : 0
+
+                    break
+                }
+                case 'latest': {
+                    const latestRecord = groupRows.sort((a, b) => {
+                        if (!a['Last Date'] || !b['Last Date']) {
+                            return 0
+                        }
+                        return (
+                            new Date(b['Last Date'] as string).getTime() -
+                            new Date(a['Last Date'] as string).getTime()
+                        )
+                    })[0]
+
+                    aggregatedValue = latestRecord
+                        ? latestRecord[valueColumns[i]] || 0
+                        : 0
+                    break
+                }
+
+                default:
+                    throw new Error(
+                        `Unknown aggregation mode: ${aggregationModes[i]}`
+                    )
             }
-            default:
-                throw new Error(`Unknown aggregation mode: ${agg.mode}`)
+
+            newRow[valueColumns[i]] = aggregatedValue
         }
 
-        aggregatedRows.push({
-            [agg.groupByColumn]: groupKey,
-            [agg.valueColumn]: aggregatedValue,
-        } as DataRow)
+        aggregatedRows.push(newRow)
     }
     return aggregatedRows
 }

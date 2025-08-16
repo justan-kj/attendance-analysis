@@ -27,16 +27,18 @@ const StudentSummary: React.FC<{
         (row) => row['Course Title'] === studentData['Course Title']
     )
 
-    const attendanceYearData = aggregateRowsByColumn(sameYear, {
-        groupByColumn: 'User',
-        valueColumn: '% Attendance',
-        mode: 'latest',
-    })
-    const attendanceCourseData = aggregateRowsByColumn(sameYearCourse, {
-        groupByColumn: 'User',
-        valueColumn: '% Attendance',
-        mode: 'latest',
-    })
+    const attendanceYearData = aggregateRowsByColumn(
+        sameYear,
+        ['User'],
+        ['% Attendance'],
+        ['latest']
+    )
+    const attendanceCourseData = aggregateRowsByColumn(
+        sameYearCourse,
+        ['User'],
+        ['% Attendance'],
+        ['latest']
+    )
     const attendanceRate = studentData['% Attendance'] || 0
     const sameYearRank =
         findPercentRankByColumn(
