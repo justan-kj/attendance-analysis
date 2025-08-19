@@ -132,11 +132,8 @@ const HomeDashboard: React.FC = () => {
             'Explained Non Attendances (AA)': 0,
             'Non Attendances (AA)': 0,
             'Attendance Not Recorded (AA)': 0,
-        }
+        } as Record<string, number>
     )
-
-    console.log('Filtered Data:', countData)
-
     const getPieSeries = (keys: string[]) => {
         const series = keys.map((key, index) => {
             if ((countData[key] as number) > 0) {
