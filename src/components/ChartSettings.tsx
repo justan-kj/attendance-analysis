@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
 import { Paper, Button, Typography, Stack } from '@mui/material'
-import type {
-    ColumnAggregation,
-    AggregationMode,
-} from '../utils/DataProcessing'
+import type { AggregationMode } from '../utils/DataProcessing'
 import AppSelect from './AppSelect'
 
 export interface ChartSettingsProps {
-    onSubmit: (settings: ColumnAggregation) => void
+    onSubmit: (settings: {
+        groupByColumn: string
+        valueColumn: string
+        mode: AggregationMode
+    }) => void
     headers: string[]
 }
 
