@@ -33,10 +33,10 @@ const StudentDashboard: React.FC = () => {
     }, [data, studentId])
 
     const getLatestData = () => {
-        const lastRowData = studentData.sort((a, b) => {
+        const lastRowData = studentData.sort((a: DataRow, b: DataRow) => {
             return (
-                new Date(b['Last Date'] as string).getTime() -
-                new Date(a['Last Date'] as string).getTime()
+                new Date(b['Last Date']).getTime() -
+                new Date(a['Last Date']).getTime()
             )
         })[0]
         if (!lastRowData) {
@@ -70,7 +70,7 @@ const StudentDashboard: React.FC = () => {
         ['latest']
     ).flatMap((row) =>
         row['Last Date']
-            ? [{ ...row, 'Last Date': new Date(row['Last Date'] as string) }]
+            ? [{ ...row, 'Last Date': new Date(row['Last Date']) }]
             : []
     )
 

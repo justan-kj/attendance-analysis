@@ -1,33 +1,40 @@
 import { utils } from 'xlsx'
 import type { WorkSheet } from 'xlsx'
 import _ from 'lodash'
+import { z } from 'zod'
 export interface ExcelTable {
     workbookName: string
     worksheetName: string
     headers: string[]
-    rows: Record<string, unknown>[]
+    rows: DataRow[]
 }
 
-export interface DataRow {
-    User: string
-    'Last Submitted': Date | undefined
-    'Last Attendence': Date | undefined
-    'Last Attended (AA)': Date | undefined
-    '% Attendance': number | undefined
-    'Level of Study': string | undefined
-    'Course Title': string | undefined
-    'Year of Course': number | undefined
-    'Registration Status': string | undefined
-    'Academic Advising Sessions': number | undefined
-    'Attended (AA)': number | undefined
-    'Explained Non Attendances (AA)': number | undefined
-    'Non Attendances (AA)': number | undefined
-    'Attendance Not Recorded (AA)': number | undefined
-    Assessments: number | undefined
-    Submitted: number | undefined
-    'Explained Non-Submission': number | undefined
-    'Non-Submission': number | undefined
-    [key: string]: string | number | Date | undefined
+export const ExcelRowSchema = z.object({
+    User: z.union([z.string(), z.number()]).nullable(),
+    'Last Submitted': z.number().nullable(),
+    'Last Attendence': z.number().nullable(),
+    'Last Attended (AA)': z.number().nullable(),
+
+    '% Attendance': z.number().nullable(),
+
+    '% Submitted': z.number().nullable(),
+    'Level of Study': z.string().nullable(),
+    'Course Title': z.string().nullable(),
+    'Year of Course': z.union([z.string(), z.number()]).nullable(),
+    'Registration Status': z.string().nullable(),
+    'Attended (AA)': z.number().nullable(),
+    'Explained Non Attendances (AA)': z.number().nullable(),
+    'Non Attendances (AA)': z.number().nullable(),
+    'Attendance Not Recorded (AA)': z.number().nullable(),
+    'Academic Advising Sessions': z.number().nullable(),
+    Submitted: z.number().nullable(),
+    'Explained Non-Submission': z.number().nullable(),
+    'Non Submission': z.number().nullable(),
+})
+
+export type DataRow = z.infer<typeof ExcelRowSchema> & {
+    'Last Date': Date
+    [key: string]: any
 }
 
 export const parseExcelWorksheet = (
@@ -36,8 +43,7 @@ export const parseExcelWorksheet = (
     worksheet: WorkSheet
 ): ExcelTable => {
     const json = utils.sheet_to_json<Record<string, unknown>>(worksheet, {
-        raw: false,
-        dateNF: 'yyyy-mm-dd',
+        raw: true,
         defval: null,
         blankrows: false,
     })
@@ -50,19 +56,51 @@ export const parseExcelWorksheet = (
         }
     }
 
-    const headers = Array.from(new Set(json.flatMap((row) => Object.keys(row))))
-    const formattedRows = json.map((row) => {
-        const newRow = { ...row }
+    const dataHeaders = Array.from(
+        new Set(json.flatMap((row) => Object.keys(row)))
+    )
+    const schemaHeaders = Object.keys(ExcelRowSchema.shape)
+    const missingHeaders = schemaHeaders.filter(
+        (key) => !dataHeaders.includes(key)
+    )
+
+    console.log(dataHeaders, schemaHeaders)
+    console.log(missingHeaders)
+    if (missingHeaders.length > 0) {
+        throw new Error(
+            `Required columns missing: ${missingHeaders.join(', ')}`
+        )
+    }
+
+    const validatedRows = json.map((row) => {
+        try {
+            return ExcelRowSchema.strip().parse(row)
+        } catch (error) {
+            console.warn(`Row validation failed for row:`, row, error)
+            return row
+        }
+    })
+
+    console.log(validatedRows[0])
+
+    const formattedRows = validatedRows.map((row) => {
+        const newRow: DataRow = { ...row }
         Object.keys(row).forEach((key) => {
             if (key.toLowerCase().startsWith('%') && row[key]) {
-                newRow[key] = (row[key] as number) * 100
+                newRow[key] = _.round((row[key] as number) * 100, 2)
             }
         })
-        newRow['Last Date'] = _.max([
+        const maxDateValue = _.max([
             row['Last Submitted'],
             row['Last Attendence'],
             row['Last Attended (AA)'],
-        ]) as Date | undefined
+        ])
+        if (typeof maxDateValue !== 'number') {
+            newRow['Last Date'] = new Date()
+        } else {
+            newRow['Last Date'] = excelToJsDate(maxDateValue)
+        }
+
         return newRow
     })
     const dataRows = _.sortBy(formattedRows, (row) => row['Last Date'])
@@ -70,7 +108,11 @@ export const parseExcelWorksheet = (
     return {
         workbookName,
         worksheetName,
-        headers,
+        headers: dataHeaders,
         rows: dataRows,
     }
+}
+
+const excelToJsDate = (excelDate: number) => {
+    return new Date((excelDate - (25567 + 1)) * 86400 * 1000)
 }
