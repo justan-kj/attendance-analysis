@@ -14,9 +14,7 @@ export const ExcelRowSchema = z.object({
     'Last Submitted': z.number().nullable(),
     'Last Attendence': z.number().nullable(),
     'Last Attended (AA)': z.number().nullable(),
-
     '% Attendance': z.number().nullable(),
-
     '% Submitted': z.number().nullable(),
     'Level of Study': z.string().nullable(),
     'Course Title': z.string().nullable(),
@@ -64,11 +62,11 @@ export const parseExcelWorksheet = (
         (key) => !dataHeaders.includes(key)
     )
 
-    console.log(dataHeaders, schemaHeaders)
-    console.log(missingHeaders)
     if (missingHeaders.length > 0) {
         throw new Error(
-            `Required columns missing: ${missingHeaders.join(', ')}`
+            `Required columns missing. Reupload a file with the missing columns: ${missingHeaders.join(
+                ', '
+            )}`
         )
     }
 

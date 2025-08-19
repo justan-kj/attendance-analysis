@@ -12,7 +12,7 @@ const UploadPage: React.FC = () => {
     }
     const { data, setData, saveData, clearSavedData } = context
 
-    const handleDataUpload = async (
+    const handleDataUpload = (
         filename: string,
         sheetname: string,
         sheet: WorkSheet
