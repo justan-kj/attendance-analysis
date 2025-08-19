@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import type { ExcelTable } from '../utils/ExcelParser'
 import { DataContext } from './DataContext'
+import { saveDataset, loadDataset } from '../utils/DataPersistence'
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
@@ -12,7 +13,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
             const savedData = localStorage.getItem('savedData')
 
             if (savedData) {
-                setData(JSON.parse(savedData))
+                setData(loadDataset())
             }
         } catch (err) {
             console.error('Error loading saved data:', err)
@@ -20,8 +21,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     }, [])
 
     const saveData = (data: ExcelTable | null) => {
+        if (!data) {
+            return
+        }
         try {
-            localStorage.setItem('savedData', JSON.stringify(data))
+            saveDataset(data)
         } catch (err) {
             console.error('Error saving data:', err)
         }

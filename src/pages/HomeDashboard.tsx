@@ -1,20 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import LineChartComponent from '../components/LineChart'
 import PieChartComponent from '../components/PieChart'
 import { Stack, Typography, Paper } from '@mui/material'
-import StudentSelector from '../components/StudentSelector'
-import {
-    aggregateRowsByColumn,
-    filterRowsByColumn,
-} from '../utils/DataProcessing'
-import type { ColumnFilter } from '../utils/DataProcessing'
+import { aggregateRowsByColumn } from '../utils/DataProcessing'
 import type { DataRow } from '../utils/ExcelParser'
 import NoDataWarning from '../components/NoDataWarning'
-import _, { max } from 'lodash'
-import type { PieValueType, ScatterValueType } from '@mui/x-charts'
+import type { PieValueType } from '@mui/x-charts'
 import { useData } from '../hook/useData'
-import StudentSummary from '../components/StudentSummary'
-import ScatterChartComponent from '../components/ScatterChart'
 import BarChartComponent from '../components/BarChart'
 
 const getColor = (attendanceRate: number) => {
@@ -46,10 +37,8 @@ const HomeDashboard: React.FC = () => {
             ],
             [
                 '% Attendance',
-                '% Attendance (Unexcused)',
                 '% Submitted',
                 'Last Date',
-                'Academic Advising Sessions',
                 'Attended (AA)',
                 'Explained Non Attendances (AA)',
                 'Non Attendances (AA)',
@@ -71,8 +60,6 @@ const HomeDashboard: React.FC = () => {
                 'max',
                 'max',
                 'max',
-                'max',
-                'max',
             ]
         )
         const latestDataWithDates = latestData.flatMap((row) =>
@@ -80,7 +67,7 @@ const HomeDashboard: React.FC = () => {
                 ? [
                       {
                           ...row,
-                          'Last Date': new Date(row['Last Date'] as string),
+                          'Last Date': new Date(row['Last Date']),
                       },
                   ]
                 : []
@@ -92,8 +79,8 @@ const HomeDashboard: React.FC = () => {
     const courseData = aggregateRowsByColumn(
         filteredData,
         ['Course Title'],
-        ['% Attendance', '% Attendance (Unexcused)', '% Submitted'],
-        ['mean', 'mean', 'mean']
+        ['% Attendance', '% Submitted'],
+        ['mean', 'mean']
     )
 
     const attendanceData = courseData

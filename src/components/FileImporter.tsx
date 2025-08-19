@@ -46,19 +46,19 @@ const FileImporter: React.FC<FileImporterProps> = ({ onSubmit }) => {
     }
 
     const handleSubmit = async () => {
-        if (!workbook || !selectedSheetname) {
+        if (!workbook || !selectedSheetname || !onSubmit || !file) {
             setError('Please select a file and a sheet first.')
             return
         }
+
         try {
-            if (onSubmit && file) {
-                onSubmit(
-                    file.name,
-                    selectedSheetname,
-                    workbook.Sheets[selectedSheetname]
-                )
-            }
+            onSubmit(
+                file.name,
+                selectedSheetname,
+                workbook.Sheets[selectedSheetname]
+            )
         } catch (err) {
+            console.log('hi')
             setError(
                 err instanceof Error ? err.message : 'Failed to process sheet'
             )
@@ -134,7 +134,7 @@ const FileImporter: React.FC<FileImporterProps> = ({ onSubmit }) => {
                     className="submit-button"
                     variant="contained"
                     onClick={handleSubmit}
-                    disabled={!workbook || !selectedSheetname}
+                    disabled={!workbook || !selectedSheetname || error}
                 >
                     Upload
                 </Button>

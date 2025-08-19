@@ -164,8 +164,8 @@ export const aggregateRowsByColumn = (
                             return 0
                         }
                         return (
-                            new Date(b['Last Date'] as string).getTime() -
-                            new Date(a['Last Date'] as string).getTime()
+                            new Date(b['Last Date']).getTime() -
+                            new Date(a['Last Date']).getTime()
                         )
                     })[0]
 
