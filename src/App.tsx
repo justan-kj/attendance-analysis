@@ -1,6 +1,6 @@
 import DataTablePage from './pages/DataTablePage'
 import { CssBaseline, Box } from '@mui/material'
-import { BrowserRouter, Routes, Route } from 'react-router'
+import { HashRouter, Routes, Route } from 'react-router'
 import { DataProvider } from './contexts/DataProvider'
 import UploadPage from './pages/UploadPage'
 import AppLayout from './components/AppLayout'
@@ -14,7 +14,7 @@ function App() {
             <CssBaseline />
             <Box sx={{ backgroundColor: 'grey.50', minHeight: '100vh' }}>
                 <DataProvider>
-                    <BrowserRouter>
+                    <HashRouter>
                         <AppLayout />
                         <Routes>
                             <Route path="/" element={<HomeDashboard />} />
@@ -29,7 +29,7 @@ function App() {
                                 element={<StudentDashboard />}
                             />
                         </Routes>
-                    </BrowserRouter>
+                    </HashRouter>
                 </DataProvider>
             </Box>
         </>
