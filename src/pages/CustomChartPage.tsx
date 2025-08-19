@@ -9,15 +9,21 @@ import {
     aggregateRowsByColumn,
     filterRowsByColumn,
 } from '../utils/DataProcessing'
-import type { ColumnAggregation, ColumnFilter } from '../utils/DataProcessing'
+import type { ColumnFilter, AggregationMode } from '../utils/DataProcessing'
 import ChartSettings from '../components/ChartSettings'
 import NoDataWarning from '../components/NoDataWarning'
 import ChartFilters from '../components/ChartFilters'
 import type { DataRow } from '../utils/ExcelParser'
 
+interface AggregationSettings {
+    groupByColumn: string
+    valueColumn: string
+    mode: AggregationMode
+}
+
 const CustomChartPage: React.FC = () => {
     const { data, headers } = useData()
-    const [aggregation, setAggregation] = useState<ColumnAggregation>({
+    const [aggregation, setAggregation] = useState<AggregationSettings>({
         groupByColumn: 'Year of Course',
         valueColumn: '% Attendance',
         mode: 'mean',
@@ -29,7 +35,7 @@ const CustomChartPage: React.FC = () => {
     useEffect(() => {
         setFilteredData(data)
     }, [data])
-    const onSubmit = (settings: ColumnAggregation) => {
+    const onSubmit = (settings: AggregationSettings) => {
         setAggregation(settings)
     }
 
@@ -42,7 +48,12 @@ const CustomChartPage: React.FC = () => {
         setFilteredData(newData)
     }
 
-    const totals = aggregateRowsByColumn(filteredData || [], aggregation)
+    const totals = aggregateRowsByColumn(
+        filteredData || [],
+        [aggregation.groupByColumn],
+        [aggregation.valueColumn],
+        [aggregation.mode]
+    )
     const x_values = totals.map(
         (row) => row[aggregation.groupByColumn] as string
     )

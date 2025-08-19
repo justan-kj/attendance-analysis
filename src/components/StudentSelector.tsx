@@ -60,11 +60,12 @@ const StudentSelector: React.FC<StudentSelectorProps> = ({
         )
     )
 
-    const latestAttendanceData = aggregateRowsByColumn(validStudents, {
-        groupByColumn: 'User',
-        valueColumn: '% Attendance',
-        mode: 'latest',
-    })
+    const latestAttendanceData = aggregateRowsByColumn(
+        validStudents,
+        ['User'],
+        ['% Attendance'],
+        ['latest']
+    )
 
     const low_attendance_students = Array.from(
         new Set(

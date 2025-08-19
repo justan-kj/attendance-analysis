@@ -63,11 +63,12 @@ const StudentDashboard: React.FC = () => {
     }
     const latestData = getLatestData()
 
-    const attendanceData = aggregateRowsByColumn(studentData, {
-        groupByColumn: 'Last Date',
-        valueColumn: '% Attendance',
-        mode: 'latest',
-    }).flatMap((row) =>
+    const attendanceData = aggregateRowsByColumn(
+        studentData,
+        ['Last Date'],
+        ['% Attendance'],
+        ['latest']
+    ).flatMap((row) =>
         row['Last Date']
             ? [{ ...row, 'Last Date': new Date(row['Last Date'] as string) }]
             : []
