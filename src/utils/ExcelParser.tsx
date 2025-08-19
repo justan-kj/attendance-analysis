@@ -32,7 +32,7 @@ export const ExcelRowSchema = z.object({
 
 export type DataRow = z.infer<typeof ExcelRowSchema> & {
     'Last Date': Date
-    [key: string]: any
+    [key: string]: unknown
 }
 
 export const parseExcelWorksheet = (
@@ -70,21 +70,23 @@ export const parseExcelWorksheet = (
         )
     }
 
-    const validatedRows = json.map((row) => {
+    const validatedRows: DataRow[] = json.reduce<DataRow[]>((acc, row) => {
         try {
-            return ExcelRowSchema.strip().parse(row)
+            const validatedRow = {
+                ...ExcelRowSchema.strip().parse(row),
+                'Last Date': new Date(),
+            }
+            acc.push(validatedRow)
         } catch (error) {
             console.warn(`Row validation failed for row:`, row, error)
-            return row
         }
-    })
+        return acc
+    }, [])
 
-    console.log(validatedRows[0])
-
-    const formattedRows = validatedRows.map((row) => {
-        const newRow: DataRow = { ...row }
-        Object.keys(row).forEach((key) => {
-            if (key.toLowerCase().startsWith('%') && row[key]) {
+    const formattedRows = validatedRows.map((row: DataRow) => {
+        const newRow = { ...row }
+        Object.keys(row).forEach((key: keyof DataRow) => {
+            if (typeof key === 'string' && key.startsWith('%') && row[key]) {
                 newRow[key] = _.round((row[key] as number) * 100, 2)
             }
         })
@@ -93,9 +95,7 @@ export const parseExcelWorksheet = (
             row['Last Attendence'],
             row['Last Attended (AA)'],
         ])
-        if (typeof maxDateValue !== 'number') {
-            newRow['Last Date'] = new Date()
-        } else {
+        if (typeof maxDateValue == 'number') {
             newRow['Last Date'] = excelToJsDate(maxDateValue)
         }
 

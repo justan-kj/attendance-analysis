@@ -134,7 +134,7 @@ const FileImporter: React.FC<FileImporterProps> = ({ onSubmit }) => {
                     className="submit-button"
                     variant="contained"
                     onClick={handleSubmit}
-                    disabled={!workbook || !selectedSheetname || error}
+                    disabled={!workbook || !selectedSheetname || !!error}
                 >
                     Upload
                 </Button>

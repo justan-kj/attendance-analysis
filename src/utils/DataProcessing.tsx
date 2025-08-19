@@ -169,9 +169,11 @@ export const aggregateRowsByColumn = (
                         )
                     })[0]
 
-                    aggregatedValue = latestRecord
-                        ? latestRecord[valueColumns[i]] || 0
-                        : 0
+                    aggregatedValue =
+                        (latestRecord?.[valueColumns[i]] as
+                            | string
+                            | number
+                            | Date) ?? 0
                     break
                 }
 
